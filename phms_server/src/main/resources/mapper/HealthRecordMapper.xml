@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.HealthRecordMapper">
+
+    <resultMap id="healthRecordMap" type="org.hylee.phms.server.persistence.HealthRecordDO">
+        <id property="recordId" column="record_id"/>
+        <result property="userGoalId" column="user_goal_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="goalId" column="goal_id"/>
+        <result property="recordValue" column="record_value"/>
+        <result property="recordText" column="record_text"/>
+        <result property="recordTime" column="record_time"/>
+        <result property="recordSource" column="record_source"/>
+        <result property="evaluationResult" column="evaluation_result"/>
+        <result property="remark" column="remark"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        record_id,
+        user_goal_id,
+        user_id,
+        goal_id,
+        record_value,
+        record_text,
+        record_time,
+        record_source,
+        evaluation_result,
+        remark,
+        created_time,
+        last_change_time
+    </sql>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.HealthRecordDO"
+            useGeneratedKeys="true" keyProperty="recordId">
+        INSERT INTO t_health_record (
+            user_goal_id,
+            user_id,
+            goal_id,
+            record_value,
+            record_text,
+            record_time,
+            record_source,
+            evaluation_result,
+            remark
+        )
+        VALUES (
+            #{userGoalId},
+            #{userId},
+            #{goalId},
+            #{recordValue},
+            #{recordText},
+            #{recordTime},
+            #{recordSource},
+            #{evaluationResult},
+            #{remark}
+        )
+    </insert>
+
+    <select id="selectByIdAndUser" resultMap="healthRecordMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_health_record
+        WHERE record_id = #{recordId}
+          AND user_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <select id="selectByUserGoalAndRange" resultMap="healthRecordMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_health_record
+        WHERE user_goal_id = #{userGoalId}
+          AND user_id = #{userId}
+          AND goal_id = #{goalId}
+        <if test="rangeStart != null">
+            AND record_time &gt;= #{rangeStart}
+        </if>
+        ORDER BY record_time ASC, record_id ASC
+        LIMIT #{limit}
+    </select>
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.SyncTaskMapper">
+
+    <resultMap id="syncTaskMap" type="org.hylee.phms.server.persistence.SyncTaskDO">
+        <id property="taskId" column="task_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="sourceId" column="source_id"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="taskType" column="task_type"/>
+        <result property="taskStatus" column="task_status"/>
+        <result property="fileName" column="file_name"/>
+        <result property="metricCategory" column="metric_category"/>
+        <result property="totalCount" column="total_count"/>
+        <result property="insertCount" column="insert_count"/>
+        <result property="updateCount" column="update_count"/>
+        <result property="failCount" column="fail_count"/>
+        <result property="summaryMessage" column="summary_message"/>
+        <result property="startedTime" column="started_time"/>
+        <result property="finishedTime" column="finished_time"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.SyncTaskDO"
+            useGeneratedKeys="true" keyProperty="taskId">
+        INSERT INTO t_sync_task (
+            user_id,
+            source_id,
+            task_type,
+            task_status,
+            file_name,
+            metric_category,
+            total_count,
+            insert_count,
+            update_count,
+            fail_count,
+            summary_message,
+            started_time
+        )
+        VALUES (
+            #{userId},
+            #{sourceId},
+            #{taskType},
+            #{taskStatus},
+            #{fileName},
+            #{metricCategory},
+            #{totalCount},
+            #{insertCount},
+            #{updateCount},
+            #{failCount},
+            #{summaryMessage},
+            #{startedTime}
+        )
+    </insert>
+
+    <update id="updateSummary" parameterType="org.hylee.phms.server.persistence.SyncTaskDO">
+        UPDATE t_sync_task
+        SET task_status = #{taskStatus},
+            total_count = #{totalCount},
+            insert_count = #{insertCount},
+            update_count = #{updateCount},
+            fail_count = #{failCount},
+            summary_message = #{summaryMessage},
+            finished_time = #{finishedTime}
+        WHERE task_id = #{taskId}
+          AND user_id = #{userId}
+    </update>
+
+    <select id="selectRecentByUser" resultMap="syncTaskMap">
+        SELECT task.task_id,
+               task.user_id,
+               task.source_id,
+               source.source_name,
+               task.task_type,
+               task.task_status,
+               task.file_name,
+               task.metric_category,
+               task.total_count,
+               task.insert_count,
+               task.update_count,
+               task.fail_count,
+               task.summary_message,
+               task.started_time,
+               task.finished_time,
+               task.created_time,
+               task.last_change_time
+        FROM t_sync_task task
+        LEFT JOIN t_data_source source ON source.source_id = task.source_id
+        WHERE task.user_id = #{userId}
+        <if test="sourceId != null">
+            AND task.source_id = #{sourceId}
+        </if>
+        ORDER BY task.started_time DESC, task.task_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectLatestByUser" resultMap="syncTaskMap">
+        SELECT task.task_id,
+               task.user_id,
+               task.source_id,
+               source.source_name,
+               task.task_type,
+               task.task_status,
+               task.file_name,
+               task.metric_category,
+               task.total_count,
+               task.insert_count,
+               task.update_count,
+               task.fail_count,
+               task.summary_message,
+               task.started_time,
+               task.finished_time,
+               task.created_time,
+               task.last_change_time
+        FROM t_sync_task task
+        LEFT JOIN t_data_source source ON source.source_id = task.source_id
+        WHERE task.user_id = #{userId}
+        ORDER BY task.started_time DESC, task.task_id DESC
+        LIMIT 1
+    </select>
+
+    <select id="countByUser" resultType="long">
+        SELECT COUNT(*)
+        FROM t_sync_task
+        WHERE user_id = #{userId}
+    </select>
+
+    <delete id="deleteBySourceIdAndUser">
+        DELETE FROM t_sync_task
+        WHERE source_id = #{sourceId}
+          AND user_id = #{userId}
+    </delete>
+</mapper>

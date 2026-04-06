@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: phms-server
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${PHMS_DB_HOST:localhost}:${PHMS_DB_PORT:3306}/${PHMS_DB_NAME:md_phms}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: ${PHMS_DB_USER:root}
+    password: ${PHMS_DB_PASSWORD:123456}
+
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: org.hylee.phms.server.persistence
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    org.hylee.phms.server: info

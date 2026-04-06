@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.HealthMetricMapper">
+
+    <resultMap id="healthMetricMap" type="org.hylee.phms.server.persistence.HealthMetricDO">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="measureDate" column="measure_date"/>
+        <result property="steps" column="steps"/>
+        <result property="restingHeartRate" column="resting_heart_rate"/>
+        <result property="sleepHours" column="sleep_hours"/>
+        <result property="systolic" column="systolic"/>
+        <result property="diastolic" column="diastolic"/>
+        <result property="stressLevel" column="stress_level"/>
+        <result property="sourceId" column="source_id"/>
+        <result property="sourceType" column="source_type"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="syncTaskId" column="sync_task_id"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        id,
+        user_id,
+        measure_date,
+        steps,
+        resting_heart_rate,
+        sleep_hours,
+        systolic,
+        diastolic,
+        stress_level,
+        source_id,
+        source_type,
+        source_name,
+        sync_task_id
+    </sql>
+
+    <select id="selectLatestMetricByUser" resultMap="healthMetricMap">
+        SELECT <include refid="baseColumns"/>
+        FROM health_metric
+        WHERE user_id = #{userId}
+        ORDER BY measure_date DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectRecentMetrics" resultMap="healthMetricMap">
+        SELECT <include refid="baseColumns"/>
+        FROM health_metric
+        WHERE user_id = #{userId}
+          AND measure_date &gt;= #{startDate}
+        ORDER BY measure_date DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectByUserAndDate" resultMap="healthMetricMap">
+        SELECT <include refid="baseColumns"/>
+        FROM health_metric
+        WHERE user_id = #{userId}
+          AND measure_date = #{measureDate}
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.HealthMetricDO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO health_metric (
+            user_id,
+            measure_date,
+            steps,
+            resting_heart_rate,
+            sleep_hours,
+            systolic,
+            diastolic,
+            stress_level,
+            source_id,
+            source_type,
+            source_name,
+            sync_task_id
+        )
+        VALUES (
+            #{userId},
+            #{measureDate},
+            #{steps},
+            #{restingHeartRate},
+            #{sleepHours},
+            #{systolic},
+            #{diastolic},
+            #{stressLevel},
+            #{sourceId},
+            #{sourceType},
+            #{sourceName},
+            #{syncTaskId}
+        )
+    </insert>
+
+    <update id="updateByUserAndDate" parameterType="org.hylee.phms.server.persistence.HealthMetricDO">
+        UPDATE health_metric
+        SET steps = #{steps},
+            resting_heart_rate = #{restingHeartRate},
+            sleep_hours = #{sleepHours},
+            systolic = #{systolic},
+            diastolic = #{diastolic},
+            stress_level = #{stressLevel},
+            source_id = #{sourceId},
+            source_type = #{sourceType},
+            source_name = #{sourceName},
+            sync_task_id = #{syncTaskId}
+        WHERE user_id = #{userId}
+          AND measure_date = #{measureDate}
+    </update>
+
+    <update id="clearSourceReferenceByUserAndSource">
+        UPDATE health_metric
+        SET source_id = NULL
+        WHERE user_id = #{userId}
+          AND source_id = #{sourceId}
+    </update>
+
+    <select id="countImportedMetricDays" resultType="long">
+        SELECT COUNT(*)
+        FROM health_metric
+        WHERE user_id = #{userId}
+          AND source_id IS NOT NULL
+    </select>
+</mapper>

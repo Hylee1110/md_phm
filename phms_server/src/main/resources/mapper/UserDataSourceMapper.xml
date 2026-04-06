@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.UserDataSourceMapper">
+
+    <resultMap id="userDataSourceMap" type="org.hylee.phms.server.persistence.UserDataSourceDO">
+        <id property="sourceId" column="source_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="sourceType" column="source_type"/>
+        <result property="sourceStatus" column="source_status"/>
+        <result property="description" column="description"/>
+        <result property="lastSyncTime" column="last_sync_time"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+        <result property="metricCount" column="metric_count"/>
+        <result property="taskCount" column="task_count"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.UserDataSourceDO"
+            useGeneratedKeys="true" keyProperty="sourceId">
+        INSERT INTO t_data_source (
+            user_id,
+            source_name,
+            source_type,
+            source_status,
+            description
+        )
+        VALUES (
+            #{userId},
+            #{sourceName},
+            #{sourceType},
+            #{sourceStatus},
+            #{description}
+        )
+    </insert>
+
+    <select id="selectByIdAndUser" resultMap="userDataSourceMap">
+        SELECT ds.source_id,
+               ds.user_id,
+               ds.source_name,
+               ds.source_type,
+               ds.source_status,
+               ds.description,
+               ds.last_sync_time,
+               ds.created_time,
+               ds.last_change_time,
+               COALESCE(metric_stats.metric_count, 0) AS metric_count,
+               COALESCE(task_stats.task_count, 0) AS task_count
+        FROM t_data_source ds
+        LEFT JOIN (
+            SELECT source_id, COUNT(*) AS metric_count
+            FROM health_metric
+            WHERE source_id IS NOT NULL
+            GROUP BY source_id
+        ) metric_stats ON metric_stats.source_id = ds.source_id
+        LEFT JOIN (
+            SELECT source_id, COUNT(*) AS task_count
+            FROM t_sync_task
+            GROUP BY source_id
+        ) task_stats ON task_stats.source_id = ds.source_id
+        WHERE ds.source_id = #{sourceId}
+          AND ds.user_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <select id="selectByUser" resultMap="userDataSourceMap">
+        SELECT ds.source_id,
+               ds.user_id,
+               ds.source_name,
+               ds.source_type,
+               ds.source_status,
+               ds.description,
+               ds.last_sync_time,
+               ds.created_time,
+               ds.last_change_time,
+               COALESCE(metric_stats.metric_count, 0) AS metric_count,
+               COALESCE(task_stats.task_count, 0) AS task_count
+        FROM t_data_source ds
+        LEFT JOIN (
+            SELECT source_id, COUNT(*) AS metric_count
+            FROM health_metric
+            WHERE source_id IS NOT NULL
+            GROUP BY source_id
+        ) metric_stats ON metric_stats.source_id = ds.source_id
+        LEFT JOIN (
+            SELECT source_id, COUNT(*) AS task_count
+            FROM t_sync_task
+            GROUP BY source_id
+        ) task_stats ON task_stats.source_id = ds.source_id
+        WHERE ds.user_id = #{userId}
+        ORDER BY ds.last_sync_time DESC, ds.created_time DESC, ds.source_id DESC
+    </select>
+
+    <update id="updateByIdAndUser" parameterType="org.hylee.phms.server.persistence.UserDataSourceDO">
+        UPDATE t_data_source
+        SET source_name = #{sourceName},
+            source_type = #{sourceType},
+            description = #{description}
+        WHERE source_id = #{sourceId}
+          AND user_id = #{userId}
+    </update>
+
+    <update id="updateStatusByIdAndUser">
+        UPDATE t_data_source
+        SET source_status = #{sourceStatus}
+        WHERE source_id = #{sourceId}
+          AND user_id = #{userId}
+    </update>
+
+    <delete id="deleteByIdAndUser">
+        DELETE FROM t_data_source
+        WHERE source_id = #{sourceId}
+          AND user_id = #{userId}
+    </delete>
+
+    <update id="updateSyncSnapshot">
+        UPDATE t_data_source
+        SET source_status = #{sourceStatus},
+            last_sync_time = #{lastSyncTime}
+        WHERE source_id = #{sourceId}
+          AND user_id = #{userId}
+    </update>
+
+    <select id="countByUser" resultType="long">
+        SELECT COUNT(*)
+        FROM t_data_source
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="countActiveByUser" resultType="long">
+        SELECT COUNT(*)
+        FROM t_data_source
+        WHERE user_id = #{userId}
+          AND source_status = 0
+    </select>
+</mapper>

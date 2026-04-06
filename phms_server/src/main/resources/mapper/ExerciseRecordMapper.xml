@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.ExerciseRecordMapper">
+
+    <resultMap id="exerciseRecordMap" type="org.hylee.phms.server.persistence.ExerciseRecordDO">
+        <id property="recordId" column="record_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="sportId" column="sport_id"/>
+        <result property="sportName" column="sport_name"/>
+        <result property="recordTime" column="record_time"/>
+        <result property="durationMin" column="duration_min"/>
+        <result property="caloriesKcal" column="calories_kcal"/>
+        <result property="note" column="note"/>
+        <result property="dataSource" column="data_source"/>
+        <result property="externalId" column="external_id"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        record_id,
+        user_id,
+        sport_id,
+        sport_name,
+        record_time,
+        duration_min,
+        calories_kcal,
+        note,
+        data_source,
+        external_id,
+        created_time,
+        last_change_time
+    </sql>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.ExerciseRecordDO"
+            useGeneratedKeys="true" keyProperty="recordId">
+        INSERT INTO t_exercise_record (
+            user_id,
+            sport_id,
+            sport_name,
+            record_time,
+            duration_min,
+            calories_kcal,
+            note,
+            data_source,
+            external_id
+        )
+        VALUES (
+            #{userId},
+            #{sportId},
+            #{sportName},
+            #{recordTime},
+            #{durationMin},
+            #{caloriesKcal},
+            #{note},
+            #{dataSource},
+            #{externalId}
+        )
+    </insert>
+
+    <select id="selectByIdAndUser" resultMap="exerciseRecordMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_exercise_record
+        WHERE record_id = #{recordId}
+          AND user_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <select id="selectByUserAndExternalKey" resultMap="exerciseRecordMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_exercise_record
+        WHERE user_id = #{userId}
+          AND data_source = #{dataSource}
+          AND external_id = #{externalId}
+        LIMIT 1
+    </select>
+
+    <select id="selectByUserAndRange" resultMap="exerciseRecordMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_exercise_record
+        WHERE user_id = #{userId}
+        <if test="startTime != null">
+            AND record_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND record_time &lt;= #{endTime}
+        </if>
+        ORDER BY record_time DESC, record_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="countImportedByUser" resultType="long">
+        SELECT COUNT(*)
+        FROM t_exercise_record
+        WHERE user_id = #{userId}
+          AND data_source = 'import'
+    </select>
+
+    <update id="updateByIdAndUser" parameterType="org.hylee.phms.server.persistence.ExerciseRecordDO">
+        UPDATE t_exercise_record
+        SET sport_id = #{sportId},
+            sport_name = #{sportName},
+            record_time = #{recordTime},
+            duration_min = #{durationMin},
+            calories_kcal = #{caloriesKcal},
+            note = #{note},
+            data_source = #{dataSource},
+            external_id = #{externalId}
+        WHERE record_id = #{recordId}
+          AND user_id = #{userId}
+    </update>
+
+    <delete id="deleteByIdAndUser">
+        DELETE FROM t_exercise_record
+        WHERE record_id = #{recordId}
+          AND user_id = #{userId}
+    </delete>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.HealthGoalMapper">
+
+    <resultMap id="healthGoalMap" type="org.hylee.phms.server.persistence.HealthGoalDO">
+        <id property="goalId" column="goal_id"/>
+        <result property="goalCode" column="goal_code"/>
+        <result property="goalName" column="goal_name"/>
+        <result property="goalDescription" column="goal_description"/>
+        <result property="metricType" column="metric_type"/>
+        <result property="unit" column="unit"/>
+        <result property="defaultTargetMin" column="default_target_min"/>
+        <result property="defaultTargetMax" column="default_target_max"/>
+        <result property="defaultTargetText" column="default_target_text"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="goalStatus" column="goal_status"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorName" column="creator_name"/>
+        <result property="userGoalId" column="user_goal_id"/>
+        <result property="userGoalStatus" column="user_goal_status"/>
+        <result property="targetMin" column="target_min"/>
+        <result property="targetMax" column="target_max"/>
+        <result property="targetText" column="target_text"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        hg.goal_id,
+        hg.goal_code,
+        hg.goal_name,
+        hg.goal_description,
+        hg.metric_type,
+        hg.unit,
+        hg.default_target_min,
+        hg.default_target_max,
+        hg.default_target_text,
+        hg.sort_no,
+        hg.goal_status,
+        hg.created_by,
+        hg.created_time,
+        hg.last_change_time
+    </sql>
+
+    <select id="selectAdminGoals" resultMap="healthGoalMap">
+        SELECT <include refid="baseColumns"/>,
+               u.account AS creator_account,
+               COALESCE(NULLIF(u.realname, ''), NULLIF(u.nickname, ''), u.account) AS creator_name
+        FROM t_health_goal hg
+        LEFT JOIN t_user u ON hg.created_by = u.user_id
+        WHERE 1 = 1
+        <if test="goalStatus != null">
+            AND hg.goal_status = #{goalStatus}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (
+                hg.goal_code LIKE CONCAT('%', #{keyword}, '%')
+                OR hg.goal_name LIKE CONCAT('%', #{keyword}, '%')
+                OR IFNULL(hg.goal_description, '') LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        ORDER BY hg.sort_no ASC, hg.goal_id ASC
+    </select>
+
+    <select id="selectById" resultMap="healthGoalMap">
+        SELECT <include refid="baseColumns"/>,
+               u.account AS creator_account,
+               COALESCE(NULLIF(u.realname, ''), NULLIF(u.nickname, ''), u.account) AS creator_name
+        FROM t_health_goal hg
+        LEFT JOIN t_user u ON hg.created_by = u.user_id
+        WHERE hg.goal_id = #{goalId}
+        LIMIT 1
+    </select>
+
+    <select id="countByCode" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM t_health_goal
+        WHERE goal_code = #{goalCode}
+        <if test="excludeGoalId != null">
+            AND goal_id != #{excludeGoalId}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.HealthGoalDO"
+            useGeneratedKeys="true" keyProperty="goalId">
+        INSERT INTO t_health_goal (
+            goal_code,
+            goal_name,
+            goal_description,
+            metric_type,
+            unit,
+            default_target_min,
+            default_target_max,
+            default_target_text,
+            sort_no,
+            goal_status,
+            created_by
+        )
+        VALUES (
+            #{goalCode},
+            #{goalName},
+            #{goalDescription},
+            #{metricType},
+            #{unit},
+            #{defaultTargetMin},
+            #{defaultTargetMax},
+            #{defaultTargetText},
+            #{sortNo},
+            #{goalStatus},
+            #{createdBy}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="org.hylee.phms.server.persistence.HealthGoalDO">
+        UPDATE t_health_goal
+        SET goal_code = #{goalCode},
+            goal_name = #{goalName},
+            goal_description = #{goalDescription},
+            metric_type = #{metricType},
+            unit = #{unit},
+            default_target_min = #{defaultTargetMin},
+            default_target_max = #{defaultTargetMax},
+            default_target_text = #{defaultTargetText},
+            sort_no = #{sortNo},
+            goal_status = #{goalStatus}
+        WHERE goal_id = #{goalId}
+    </update>
+
+    <select id="selectAvailableGoals" resultMap="healthGoalMap">
+        SELECT <include refid="baseColumns"/>,
+               ug.user_goal_id,
+               ug.user_goal_status,
+               ug.target_min,
+               ug.target_max,
+               ug.target_text
+        FROM t_health_goal hg
+        LEFT JOIN t_user_health_goal ug
+               ON ug.goal_id = hg.goal_id
+              AND ug.user_id = #{userId}
+        WHERE hg.goal_status = 0
+        <if test="keyword != null and keyword != ''">
+            AND (
+                hg.goal_code LIKE CONCAT('%', #{keyword}, '%')
+                OR hg.goal_name LIKE CONCAT('%', #{keyword}, '%')
+                OR IFNULL(hg.goal_description, '') LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        ORDER BY hg.sort_no ASC, hg.goal_id ASC
+    </select>
+</mapper>

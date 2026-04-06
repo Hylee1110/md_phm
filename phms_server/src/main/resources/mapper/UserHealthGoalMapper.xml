@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.UserHealthGoalMapper">
+
+    <resultMap id="userHealthGoalMap" type="org.hylee.phms.server.persistence.UserHealthGoalDO">
+        <id property="userGoalId" column="user_goal_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="goalId" column="goal_id"/>
+        <result property="targetMin" column="target_min"/>
+        <result property="targetMax" column="target_max"/>
+        <result property="targetText" column="target_text"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="userGoalStatus" column="user_goal_status"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+        <result property="goalCode" column="goal_code"/>
+        <result property="goalName" column="goal_name"/>
+        <result property="goalDescription" column="goal_description"/>
+        <result property="metricType" column="metric_type"/>
+        <result property="unit" column="unit"/>
+        <result property="defaultTargetMin" column="default_target_min"/>
+        <result property="defaultTargetMax" column="default_target_max"/>
+        <result property="defaultTargetText" column="default_target_text"/>
+        <result property="goalSortNo" column="goal_sort_no"/>
+        <result property="goalStatus" column="goal_status"/>
+        <result property="recordCount" column="record_count"/>
+        <result property="latestRecordValue" column="latest_record_value"/>
+        <result property="latestRecordText" column="latest_record_text"/>
+        <result property="latestEvaluationResult" column="latest_evaluation_result"/>
+        <result property="latestRecordTime" column="latest_record_time"/>
+    </resultMap>
+
+    <sql id="joinedColumns">
+        ug.user_goal_id,
+        ug.user_id,
+        ug.goal_id,
+        ug.target_min,
+        ug.target_max,
+        ug.target_text,
+        ug.start_date,
+        ug.end_date,
+        ug.user_goal_status,
+        ug.created_time,
+        ug.last_change_time,
+        hg.goal_code,
+        hg.goal_name,
+        hg.goal_description,
+        hg.metric_type,
+        hg.unit,
+        hg.default_target_min,
+        hg.default_target_max,
+        hg.default_target_text,
+        hg.sort_no AS goal_sort_no,
+        hg.goal_status
+    </sql>
+
+    <sql id="summaryColumns">
+        (
+            SELECT COUNT(1)
+            FROM t_health_record hr
+            WHERE hr.user_goal_id = ug.user_goal_id
+        ) AS record_count,
+        (
+            SELECT hr.record_value
+            FROM t_health_record hr
+            WHERE hr.user_goal_id = ug.user_goal_id
+            ORDER BY hr.record_time DESC, hr.record_id DESC
+            LIMIT 1
+        ) AS latest_record_value,
+        (
+            SELECT hr.record_text
+            FROM t_health_record hr
+            WHERE hr.user_goal_id = ug.user_goal_id
+            ORDER BY hr.record_time DESC, hr.record_id DESC
+            LIMIT 1
+        ) AS latest_record_text,
+        (
+            SELECT hr.evaluation_result
+            FROM t_health_record hr
+            WHERE hr.user_goal_id = ug.user_goal_id
+            ORDER BY hr.record_time DESC, hr.record_id DESC
+            LIMIT 1
+        ) AS latest_evaluation_result,
+        (
+            SELECT hr.record_time
+            FROM t_health_record hr
+            WHERE hr.user_goal_id = ug.user_goal_id
+            ORDER BY hr.record_time DESC, hr.record_id DESC
+            LIMIT 1
+        ) AS latest_record_time
+    </sql>
+
+    <select id="selectByIdAndUser" resultMap="userHealthGoalMap">
+        SELECT <include refid="joinedColumns"/>,
+               <include refid="summaryColumns"/>
+        FROM t_user_health_goal ug
+        JOIN t_health_goal hg ON hg.goal_id = ug.goal_id
+        WHERE ug.user_goal_id = #{userGoalId}
+          AND ug.user_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <select id="selectByUserAndGoal" resultMap="userHealthGoalMap">
+        SELECT <include refid="joinedColumns"/>,
+               <include refid="summaryColumns"/>
+        FROM t_user_health_goal ug
+        JOIN t_health_goal hg ON hg.goal_id = ug.goal_id
+        WHERE ug.user_id = #{userId}
+          AND ug.goal_id = #{goalId}
+        LIMIT 1
+    </select>
+
+    <select id="selectByUser" resultMap="userHealthGoalMap">
+        SELECT <include refid="joinedColumns"/>,
+               <include refid="summaryColumns"/>
+        FROM t_user_health_goal ug
+        JOIN t_health_goal hg ON hg.goal_id = ug.goal_id
+        WHERE ug.user_id = #{userId}
+        <if test="userGoalStatus != null">
+            AND ug.user_goal_status = #{userGoalStatus}
+        </if>
+        ORDER BY
+            CASE WHEN ug.user_goal_status = 0 THEN 0 ELSE 1 END ASC,
+            hg.sort_no ASC,
+            ug.user_goal_id ASC
+    </select>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.UserHealthGoalDO"
+            useGeneratedKeys="true" keyProperty="userGoalId">
+        INSERT INTO t_user_health_goal (
+            user_id,
+            goal_id,
+            target_min,
+            target_max,
+            target_text,
+            start_date,
+            end_date,
+            user_goal_status
+        )
+        VALUES (
+            #{userId},
+            #{goalId},
+            #{targetMin},
+            #{targetMax},
+            #{targetText},
+            #{startDate},
+            #{endDate},
+            #{userGoalStatus}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="org.hylee.phms.server.persistence.UserHealthGoalDO">
+        UPDATE t_user_health_goal
+        SET target_min = #{targetMin},
+            target_max = #{targetMax},
+            target_text = #{targetText},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            user_goal_status = #{userGoalStatus}
+        WHERE user_goal_id = #{userGoalId}
+    </update>
+
+    <update id="updateStatusByIdAndUser">
+        UPDATE t_user_health_goal
+        SET user_goal_status = #{userGoalStatus}
+        WHERE user_goal_id = #{userGoalId}
+          AND user_id = #{userId}
+    </update>
+</mapper>

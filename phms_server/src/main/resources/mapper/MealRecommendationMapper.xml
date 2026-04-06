@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.MealRecommendationMapper">
+
+    <resultMap id="mealRecommendationMap" type="org.hylee.phms.server.persistence.MealRecommendationDO">
+        <id property="recipeId" column="recipe_id"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="adminRecommend" column="is_admin_recommend"/>
+        <result property="recipeStatus" column="recipe_status"/>
+        <result property="mealType" column="meal_type"/>
+        <result property="foodName" column="food_name"/>
+        <result property="portion" column="portion"/>
+        <result property="unit" column="unit"/>
+        <result property="calories" column="calories"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="description" column="description"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorNickname" column="creator_nickname"/>
+        <result property="creatorRealname" column="creator_realname"/>
+        <result property="ratingAvg" column="rating_avg"/>
+        <result property="ratingCount" column="rating_count"/>
+        <result property="userScore" column="user_score"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        r.recipe_id,
+        r.created_by,
+        r.is_admin_recommend,
+        r.recipe_status,
+        r.meal_type,
+        r.food_name,
+        r.portion,
+        r.unit,
+        r.calories,
+        r.image_url,
+        r.description,
+        r.created_time,
+        r.last_change_time,
+        u.account AS creator_account,
+        u.nickname AS creator_nickname,
+        u.realname AS creator_realname,
+        IFNULL(rr.rating_avg, 0.00) AS rating_avg,
+        IFNULL(rr.rating_count, 0) AS rating_count,
+        rl.score AS user_score
+    </sql>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.MealRecommendationDO"
+            useGeneratedKeys="true" keyProperty="recipeId">
+        INSERT INTO t_recipe (
+            created_by,
+            is_admin_recommend,
+            recipe_status,
+            meal_type,
+            food_name,
+            portion,
+            unit,
+            calories,
+            image_url,
+            description
+        )
+        VALUES (
+            #{createdBy},
+            #{adminRecommend},
+            #{recipeStatus},
+            #{mealType},
+            #{foodName},
+            #{portion},
+            #{unit},
+            #{calories},
+            #{imageUrl},
+            #{description}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="org.hylee.phms.server.persistence.MealRecommendationDO">
+        UPDATE t_recipe
+        SET
+            food_name = #{foodName},
+            meal_type = #{mealType},
+            portion = #{portion},
+            unit = #{unit},
+            calories = #{calories},
+            image_url = #{imageUrl},
+            description = #{description}
+        WHERE recipe_id = #{recipeId}
+          AND recipe_status != 1
+    </update>
+
+    <select id="selectRecommendations" resultMap="mealRecommendationMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_recipe r
+        LEFT JOIN t_user u ON u.user_id = r.created_by
+        LEFT JOIN t_recipe_rating rr ON rr.recipe_id = r.recipe_id
+        LEFT JOIN t_recipe_rating_log rl
+               ON rl.recipe_id = r.recipe_id
+              AND rl.user_id = #{userId}
+        WHERE r.recipe_status = 0
+        <if test="isAdmin == false">
+            AND (r.is_admin_recommend = 1 OR r.created_by = #{userId})
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND r.food_name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="mealType != null">
+            AND r.meal_type = #{mealType}
+        </if>
+        ORDER BY r.is_admin_recommend DESC, r.last_change_time DESC, r.recipe_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectById" resultMap="mealRecommendationMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_recipe r
+        LEFT JOIN t_user u ON u.user_id = r.created_by
+        LEFT JOIN t_recipe_rating rr ON rr.recipe_id = r.recipe_id
+        LEFT JOIN t_recipe_rating_log rl
+               ON rl.recipe_id = r.recipe_id
+              AND rl.user_id = #{userId}
+        WHERE r.recipe_id = #{recipeId}
+          AND r.recipe_status != 1
+        LIMIT 1
+    </select>
+
+    <update id="softDeleteById">
+        UPDATE t_recipe
+        SET recipe_status = 1
+        WHERE recipe_id = #{recipeId}
+          AND recipe_status != 1
+    </update>
+</mapper>

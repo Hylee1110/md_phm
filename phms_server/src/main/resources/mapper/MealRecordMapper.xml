@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.MealRecordMapper">
+
+    <resultMap id="mealRecordMap" type="org.hylee.phms.server.persistence.MealRecordDO">
+        <id property="recordId" column="record_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="recipeId" column="recipe_id"/>
+        <result property="foodName" column="food_name"/>
+        <result property="mealType" column="meal_type"/>
+        <result property="diningTime" column="dining_time"/>
+        <result property="intakeAmount" column="intake_amount"/>
+        <result property="caloriesPer100g" column="calories_per_100g"/>
+        <result property="estimatedCalories" column="estimated_calories"/>
+        <result property="remark" column="remark"/>
+        <result property="recordStatus" column="record_status"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        record_id,
+        user_id,
+        recipe_id,
+        food_name,
+        meal_type,
+        dining_time,
+        intake_amount,
+        calories_per_100g,
+        estimated_calories,
+        remark,
+        record_status,
+        created_time,
+        last_change_time
+    </sql>
+
+    <insert id="insert" parameterType="org.hylee.phms.server.persistence.MealRecordDO"
+            useGeneratedKeys="true" keyProperty="recordId">
+        INSERT INTO t_diet_record (
+            user_id,
+            recipe_id,
+            food_name,
+            meal_type,
+            dining_time,
+            intake_amount,
+            calories_per_100g,
+            estimated_calories,
+            remark,
+            record_status
+        )
+        VALUES (
+            #{userId},
+            #{recipeId},
+            #{foodName},
+            #{mealType},
+            #{diningTime},
+            #{intakeAmount},
+            #{caloriesPer100g},
+            #{estimatedCalories},
+            #{remark},
+            #{recordStatus}
+        )
+    </insert>
+
+    <select id="selectByIdAndUser" resultMap="mealRecordMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_diet_record
+        WHERE record_id = #{recordId}
+          AND user_id = #{userId}
+          AND record_status = 0
+        LIMIT 1
+    </select>
+
+    <select id="selectByUserAndRange" resultMap="mealRecordMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_diet_record
+        WHERE user_id = #{userId}
+          AND record_status = 0
+        <if test="startTime != null">
+            AND dining_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND dining_time &lt;= #{endTime}
+        </if>
+        ORDER BY dining_time DESC, record_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <update id="updateByIdAndUser" parameterType="org.hylee.phms.server.persistence.MealRecordDO">
+        UPDATE t_diet_record
+        SET recipe_id = #{recipeId},
+            food_name = #{foodName},
+            meal_type = #{mealType},
+            dining_time = #{diningTime},
+            intake_amount = #{intakeAmount},
+            calories_per_100g = #{caloriesPer100g},
+            estimated_calories = #{estimatedCalories},
+            remark = #{remark}
+        WHERE record_id = #{recordId}
+          AND user_id = #{userId}
+          AND record_status = 0
+    </update>
+
+    <update id="softDeleteByIdAndUser">
+        UPDATE t_diet_record
+        SET record_status = 1
+        WHERE record_id = #{recordId}
+          AND user_id = #{userId}
+          AND record_status = 0
+    </update>
+</mapper>

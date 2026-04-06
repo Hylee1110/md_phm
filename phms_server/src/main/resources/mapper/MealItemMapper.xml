@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.MealItemMapper">
+
+    <resultMap id="mealItemMap" type="org.hylee.phms.server.persistence.MealItemDO">
+        <id property="itemId" column="item_id"/>
+        <result property="mealId" column="meal_id"/>
+        <result property="foodId" column="food_id"/>
+        <result property="foodName" column="food_name"/>
+        <result property="amount" column="amount"/>
+        <result property="unit" column="unit"/>
+        <result property="kcal" column="kcal"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+    </resultMap>
+
+    <resultMap id="mealItemTemplateMap" type="org.hylee.phms.server.persistence.MealItemTemplateDO">
+        <id property="itemId" column="item_id"/>
+        <result property="mealId" column="meal_id"/>
+        <result property="mealTime" column="meal_time"/>
+        <result property="foodId" column="food_id"/>
+        <result property="foodName" column="food_name"/>
+        <result property="amount" column="amount"/>
+        <result property="unit" column="unit"/>
+        <result property="kcal" column="kcal"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        item_id,
+        meal_id,
+        food_id,
+        food_name,
+        amount,
+        unit,
+        kcal,
+        created_time,
+        last_change_time
+    </sql>
+
+    <insert id="batchInsert">
+        INSERT INTO t_meal_item (
+            meal_id,
+            food_id,
+            food_name,
+            amount,
+            unit,
+            kcal
+        )
+        VALUES
+        <foreach collection="items" item="item" separator=",">
+            (
+                #{mealId},
+                #{item.foodId},
+                #{item.foodName},
+                #{item.amount},
+                #{item.unit},
+                #{item.kcal}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectByMealId" resultMap="mealItemMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_meal_item
+        WHERE meal_id = #{mealId}
+        ORDER BY item_id ASC
+    </select>
+
+    <select id="selectByMealIds" resultMap="mealItemMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_meal_item
+        WHERE meal_id IN
+        <foreach collection="mealIds" item="mealId" open="(" separator="," close=")">
+            #{mealId}
+        </foreach>
+        ORDER BY meal_id DESC, item_id ASC
+    </select>
+
+    <select id="selectByItemIdsAndUser" resultMap="mealItemMap">
+        SELECT i.item_id,
+               i.meal_id,
+               i.food_id,
+               i.food_name,
+               i.amount,
+               i.unit,
+               i.kcal,
+               i.created_time,
+               i.last_change_time
+        FROM t_meal_item i
+        INNER JOIN t_meal_record m ON m.meal_id = i.meal_id
+        WHERE m.user_id = #{userId}
+          AND i.item_id IN
+        <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+        ORDER BY i.item_id ASC
+    </select>
+
+    <select id="selectRecentItemTemplates" resultMap="mealItemTemplateMap">
+        SELECT i.item_id,
+               i.meal_id,
+               m.meal_time,
+               i.food_id,
+               i.food_name,
+               i.amount,
+               i.unit,
+               i.kcal
+        FROM t_meal_item i
+        INNER JOIN t_meal_record m ON m.meal_id = i.meal_id
+        WHERE m.user_id = #{userId}
+        <if test="keyword != null and keyword != ''">
+            AND i.food_name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        ORDER BY m.meal_time DESC, i.item_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectRecentItemTemplatesGlobal" resultMap="mealItemTemplateMap">
+        SELECT i.item_id,
+               i.meal_id,
+               m.meal_time,
+               i.food_id,
+               i.food_name,
+               i.amount,
+               i.unit,
+               i.kcal
+        FROM t_meal_item i
+        INNER JOIN t_meal_record m ON m.meal_id = i.meal_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                i.food_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY m.meal_time DESC, i.item_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <delete id="deleteByMealId">
+        DELETE FROM t_meal_item
+        WHERE meal_id = #{mealId}
+    </delete>
+</mapper>

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.SportCourseMapper">
+
+    <resultMap id="sportCourseMap" type="org.hylee.phms.server.persistence.SportCourseDO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="coverUrl" column="cover_url"/>
+        <result property="summary" column="summary"/>
+        <result property="description" column="description"/>
+        <result property="recommendDurationMin" column="recommend_duration_min"/>
+        <result property="caloriesPerHour" column="calories_per_hour"/>
+        <result property="recommendFrequencyPerWeek" column="recommend_frequency_per_week"/>
+        <result property="level" column="level"/>
+        <result property="status" column="status"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="sortWeight" column="sort_weight"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="ratingAvg" column="rating_avg"/>
+        <result property="ratingCount" column="rating_count"/>
+        <result property="userScore" column="user_score"/>
+        <result property="audiencesCsv" column="audiences_csv"/>
+        <result property="equipmentsCsv" column="equipments_csv"/>
+        <result property="benefitsCsv" column="benefits_csv"/>
+    </resultMap>
+
+    <sql id="courseColumns">
+        sc.id,
+        sc.name,
+        sc.cover_url,
+        sc.summary,
+        sc.description,
+        sc.recommend_duration_min,
+        sc.calories_per_hour,
+        sc.recommend_frequency_per_week,
+        sc.level,
+        sc.status,
+        sc.is_deleted,
+        sc.sort_weight,
+        sc.created_at,
+        sc.updated_at
+    </sql>
+
+    <sql id="audienceAggQuery">
+        SELECT sca.course_id,
+               GROUP_CONCAT(sa.name ORDER BY sa.id SEPARATOR ',') AS audiences_csv
+        FROM sport_course_audience sca
+        INNER JOIN sport_audience sa ON sa.id = sca.audience_id
+        GROUP BY sca.course_id
+    </sql>
+
+    <sql id="equipmentAggQuery">
+        SELECT sce.course_id,
+               GROUP_CONCAT(se.name ORDER BY se.id SEPARATOR ',') AS equipments_csv
+        FROM sport_course_equipment sce
+        INNER JOIN sport_equipment se ON se.id = sce.equipment_id
+        GROUP BY sce.course_id
+    </sql>
+
+    <sql id="benefitAggQuery">
+        SELECT scb.course_id,
+               GROUP_CONCAT(sb.name ORDER BY scb.sort_order, sb.id SEPARATOR ',') AS benefits_csv
+        FROM sport_course_benefit scb
+        INNER JOIN sport_benefit sb ON sb.id = scb.benefit_id
+        GROUP BY scb.course_id
+    </sql>
+
+    <select id="selectPublishedCourses" resultMap="sportCourseMap">
+        SELECT <include refid="courseColumns"/>,
+               IFNULL(scr.rating_avg, 0.00) AS rating_avg,
+               IFNULL(scr.rating_count, 0) AS rating_count,
+               rl.score AS user_score,
+               aud.audiences_csv,
+               eq.equipments_csv,
+               ben.benefits_csv
+        FROM sport_course sc
+        LEFT JOIN sport_course_rating scr ON scr.course_id = sc.id
+        LEFT JOIN sport_course_rating_log rl
+               ON rl.course_id = sc.id
+              AND rl.user_id = #{userId}
+        LEFT JOIN (<include refid="audienceAggQuery"/>) aud ON aud.course_id = sc.id
+        LEFT JOIN (<include refid="equipmentAggQuery"/>) eq ON eq.course_id = sc.id
+        LEFT JOIN (<include refid="benefitAggQuery"/>) ben ON ben.course_id = sc.id
+        WHERE sc.is_deleted = 0
+          AND sc.status = 'published'
+        <if test="keyword != null and keyword != ''">
+            AND sc.name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        ORDER BY sc.sort_weight DESC, sc.updated_at DESC, sc.id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectAdminCourses" resultMap="sportCourseMap">
+        SELECT <include refid="courseColumns"/>,
+               IFNULL(scr.rating_avg, 0.00) AS rating_avg,
+               IFNULL(scr.rating_count, 0) AS rating_count,
+               NULL AS user_score,
+               aud.audiences_csv,
+               eq.equipments_csv,
+               ben.benefits_csv
+        FROM sport_course sc
+        LEFT JOIN sport_course_rating scr ON scr.course_id = sc.id
+        LEFT JOIN (<include refid="audienceAggQuery"/>) aud ON aud.course_id = sc.id
+        LEFT JOIN (<include refid="equipmentAggQuery"/>) eq ON eq.course_id = sc.id
+        LEFT JOIN (<include refid="benefitAggQuery"/>) ben ON ben.course_id = sc.id
+        WHERE sc.is_deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND sc.name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND sc.status = #{status}
+        </if>
+        ORDER BY sc.sort_weight DESC, sc.updated_at DESC, sc.id DESC
+    </select>
+
+    <select id="selectBaseById" resultMap="sportCourseMap">
+        SELECT <include refid="courseColumns"/>,
+               NULL AS rating_avg,
+               NULL AS rating_count,
+               NULL AS user_score,
+               NULL AS audiences_csv,
+               NULL AS equipments_csv,
+               NULL AS benefits_csv
+        FROM sport_course sc
+        WHERE sc.id = #{courseId}
+        LIMIT 1
+    </select>
+
+    <select id="selectAdminCourseById" resultMap="sportCourseMap">
+        SELECT <include refid="courseColumns"/>,
+               IFNULL(scr.rating_avg, 0.00) AS rating_avg,
+               IFNULL(scr.rating_count, 0) AS rating_count,
+               NULL AS user_score,
+               aud.audiences_csv,
+               eq.equipments_csv,
+               ben.benefits_csv
+        FROM sport_course sc
+        LEFT JOIN sport_course_rating scr ON scr.course_id = sc.id
+        LEFT JOIN (<include refid="audienceAggQuery"/>) aud ON aud.course_id = sc.id
+        LEFT JOIN (<include refid="equipmentAggQuery"/>) eq ON eq.course_id = sc.id
+        LEFT JOIN (<include refid="benefitAggQuery"/>) ben ON ben.course_id = sc.id
+        WHERE sc.id = #{courseId}
+          AND sc.is_deleted = 0
+        LIMIT 1
+    </select>
+
+    <select id="countByName" resultType="long">
+        SELECT COUNT(1)
+        FROM sport_course
+        WHERE name = #{name}
+          AND is_deleted = 0
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <insert id="insertCourse" parameterType="org.hylee.phms.server.persistence.SportCourseDO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sport_course (
+            name,
+            cover_url,
+            summary,
+            description,
+            recommend_duration_min,
+            calories_per_hour,
+            recommend_frequency_per_week,
+            level,
+            status,
+            sort_weight
+        ) VALUES (
+            #{name},
+            #{coverUrl},
+            #{summary},
+            #{description},
+            #{recommendDurationMin},
+            #{caloriesPerHour},
+            #{recommendFrequencyPerWeek},
+            #{level},
+            #{status},
+            #{sortWeight}
+        )
+    </insert>
+
+    <update id="updateCourse" parameterType="org.hylee.phms.server.persistence.SportCourseDO">
+        UPDATE sport_course
+        SET name = #{name},
+            cover_url = #{coverUrl},
+            summary = #{summary},
+            description = #{description},
+            recommend_duration_min = #{recommendDurationMin},
+            calories_per_hour = #{caloriesPerHour},
+            recommend_frequency_per_week = #{recommendFrequencyPerWeek},
+            level = #{level},
+            status = #{status},
+            sort_weight = #{sortWeight}
+        WHERE id = #{id}
+          AND is_deleted = 0
+    </update>
+
+    <update id="softDeleteCourse">
+        UPDATE sport_course
+        SET is_deleted = 1,
+            status = 'archived'
+        WHERE id = #{courseId}
+          AND is_deleted = 0
+    </update>
+
+    <select id="selectAudienceIds" resultType="long">
+        SELECT audience_id
+        FROM sport_course_audience
+        WHERE course_id = #{courseId}
+        ORDER BY audience_id ASC
+    </select>
+
+    <select id="selectEquipmentIds" resultType="long">
+        SELECT equipment_id
+        FROM sport_course_equipment
+        WHERE course_id = #{courseId}
+        ORDER BY equipment_id ASC
+    </select>
+
+    <select id="selectBenefitIds" resultType="long">
+        SELECT benefit_id
+        FROM sport_course_benefit
+        WHERE course_id = #{courseId}
+        ORDER BY sort_order ASC, benefit_id ASC
+    </select>
+
+    <delete id="deleteCourseAudiences">
+        DELETE FROM sport_course_audience
+        WHERE course_id = #{courseId}
+    </delete>
+
+    <delete id="deleteCourseEquipments">
+        DELETE FROM sport_course_equipment
+        WHERE course_id = #{courseId}
+    </delete>
+
+    <delete id="deleteCourseBenefits">
+        DELETE FROM sport_course_benefit
+        WHERE course_id = #{courseId}
+    </delete>
+
+    <insert id="insertCourseAudiences">
+        INSERT INTO sport_course_audience (
+            course_id,
+            audience_id
+        )
+        VALUES
+        <foreach collection="audienceIds" item="audienceId" separator=",">
+            (#{courseId}, #{audienceId})
+        </foreach>
+    </insert>
+
+    <insert id="insertCourseEquipments">
+        INSERT INTO sport_course_equipment (
+            course_id,
+            equipment_id
+        )
+        VALUES
+        <foreach collection="equipmentIds" item="equipmentId" separator=",">
+            (#{courseId}, #{equipmentId})
+        </foreach>
+    </insert>
+
+    <insert id="insertCourseBenefits">
+        INSERT INTO sport_course_benefit (
+            course_id,
+            benefit_id,
+            sort_order
+        )
+        VALUES
+        <foreach collection="benefitIds" item="benefitId" index="sortOrder" separator=",">
+            (#{courseId}, #{benefitId}, #{sortOrder})
+        </foreach>
+    </insert>
+</mapper>

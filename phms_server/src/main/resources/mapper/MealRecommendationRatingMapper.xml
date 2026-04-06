@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.MealRecommendationRatingMapper">
+
+    <resultMap id="ratingMap" type="org.hylee.phms.server.persistence.MealRecommendationRatingDO">
+        <id property="recipeId" column="recipe_id"/>
+        <result property="ratingAvg" column="rating_avg"/>
+        <result property="ratingCount" column="rating_count"/>
+        <result property="userScore" column="user_score"/>
+    </resultMap>
+
+    <insert id="upsertRatingLog">
+        INSERT INTO t_recipe_rating_log (
+            recipe_id,
+            user_id,
+            score
+        ) VALUES (
+            #{recipeId},
+            #{userId},
+            #{score}
+        )
+        ON DUPLICATE KEY UPDATE
+            score = VALUES(score),
+            last_change_time = CURRENT_TIMESTAMP
+    </insert>
+
+    <insert id="refreshRecipeRating">
+        INSERT INTO t_recipe_rating (
+            recipe_id,
+            rating_avg,
+            rating_count
+        )
+        SELECT
+            #{recipeId},
+            ROUND(IFNULL(AVG(score), 0), 2),
+            COUNT(1)
+        FROM t_recipe_rating_log
+        WHERE recipe_id = #{recipeId}
+        ON DUPLICATE KEY UPDATE
+            rating_avg = VALUES(rating_avg),
+            rating_count = VALUES(rating_count)
+    </insert>
+
+    <select id="selectByRecipeAndUser" resultMap="ratingMap">
+        SELECT
+            r.recipe_id,
+            IFNULL(rr.rating_avg, 0.00) AS rating_avg,
+            IFNULL(rr.rating_count, 0) AS rating_count,
+            rl.score AS user_score
+        FROM t_recipe r
+        LEFT JOIN t_recipe_rating rr ON rr.recipe_id = r.recipe_id
+        LEFT JOIN t_recipe_rating_log rl
+               ON rl.recipe_id = r.recipe_id
+              AND rl.user_id = #{userId}
+        WHERE r.recipe_id = #{recipeId}
+          AND r.recipe_status != 1
+        LIMIT 1
+    </select>
+</mapper>

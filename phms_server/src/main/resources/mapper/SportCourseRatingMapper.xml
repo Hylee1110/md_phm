@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.SportCourseRatingMapper">
+
+    <resultMap id="ratingMap" type="org.hylee.phms.server.persistence.SportCourseRatingDO">
+        <id property="courseId" column="course_id"/>
+        <result property="ratingAvg" column="rating_avg"/>
+        <result property="ratingCount" column="rating_count"/>
+        <result property="userScore" column="user_score"/>
+    </resultMap>
+
+    <insert id="upsertRatingLog">
+        INSERT INTO sport_course_rating_log (
+            course_id,
+            user_id,
+            score,
+            comment
+        ) VALUES (
+            #{courseId},
+            #{userId},
+            #{score},
+            #{comment}
+        )
+        ON DUPLICATE KEY UPDATE
+            score = VALUES(score),
+            comment = VALUES(comment),
+            created_at = CURRENT_TIMESTAMP
+    </insert>
+
+    <insert id="refreshCourseRating">
+        INSERT INTO sport_course_rating (
+            course_id,
+            rating_avg,
+            rating_count
+        )
+        SELECT
+            #{courseId},
+            ROUND(IFNULL(AVG(score), 0), 2),
+            COUNT(1)
+        FROM sport_course_rating_log
+        WHERE course_id = #{courseId}
+        ON DUPLICATE KEY UPDATE
+            rating_avg = VALUES(rating_avg),
+            rating_count = VALUES(rating_count)
+    </insert>
+
+    <select id="selectByCourseAndUser" resultMap="ratingMap">
+        SELECT
+            sc.id AS course_id,
+            IFNULL(scr.rating_avg, 0.00) AS rating_avg,
+            IFNULL(scr.rating_count, 0) AS rating_count,
+            rl.score AS user_score
+        FROM sport_course sc
+        LEFT JOIN sport_course_rating scr ON scr.course_id = sc.id
+        LEFT JOIN sport_course_rating_log rl
+               ON rl.course_id = sc.id
+              AND rl.user_id = #{userId}
+        WHERE sc.id = #{courseId}
+        LIMIT 1
+    </select>
+</mapper>

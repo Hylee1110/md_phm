@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hylee.phms.server.mapper.UserMapper">
+
+    <resultMap id="userMap" type="org.hylee.phms.server.persistence.UserDO">
+        <id property="userId" column="user_id"/>
+        <result property="account" column="account"/>
+        <result property="passwordHash" column="password_hash"/>
+        <result property="nickname" column="nickname"/>
+        <result property="realname" column="realname"/>
+        <result property="idcard" column="idcard"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="accountLevel" column="account_level"/>
+        <result property="accountStatus" column="account_status"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="lastChangeTime" column="last_change_time"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        user_id,
+        account,
+        password_hash,
+        nickname,
+        realname,
+        idcard,
+        gender,
+        age,
+        account_level,
+        account_status,
+        created_time,
+        last_change_time
+    </sql>
+
+    <select id="selectById" resultMap="userMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_user
+        WHERE user_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <select id="selectByAccount" resultMap="userMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_user
+        WHERE account = #{account}
+        LIMIT 1
+    </select>
+
+    <insert id="insertUser" parameterType="org.hylee.phms.server.persistence.UserDO"
+            useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO t_user (
+            account,
+            password_hash,
+            nickname,
+            realname,
+            idcard,
+            gender,
+            age,
+            account_level,
+            account_status
+        )
+        VALUES (
+            #{account},
+            #{passwordHash},
+            #{nickname},
+            #{realname},
+            #{idcard},
+            #{gender},
+            #{age},
+            #{accountLevel},
+            #{accountStatus}
+        )
+    </insert>
+
+    <select id="selectNormalUsers" resultMap="userMap">
+        SELECT <include refid="baseColumns"/>
+        FROM t_user
+        WHERE account_level = 0
+        <if test="keyword != null and keyword != ''">
+            AND (
+                account LIKE CONCAT('%', #{keyword}, '%')
+                OR IFNULL(nickname, '') LIKE CONCAT('%', #{keyword}, '%')
+                OR IFNULL(realname, '') LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        ORDER BY created_time DESC, user_id DESC
+    </select>
+
+    <update id="updateAccountStatus">
+        UPDATE t_user
+        SET account_status = #{accountStatus}
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="updateProfile" parameterType="org.hylee.phms.server.persistence.UserDO">
+        UPDATE t_user
+        SET nickname = #{nickname},
+            realname = #{realname},
+            idcard = #{idcard},
+            gender = #{gender},
+            age = #{age}
+        WHERE user_id = #{userId}
+    </update>
+</mapper>
