@@ -21,6 +21,11 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * {@link org.hylee.phms.server.service.HealthDataService} 实现。
+ * <p>
+ * 聚合用户档案、健康指标查询、仪表盘汇总及身份证辅助解析等能力。
+ */
 @Service
 public class HealthDataServiceImpl implements HealthDataService {
 

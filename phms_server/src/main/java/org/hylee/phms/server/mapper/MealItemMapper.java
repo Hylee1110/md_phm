@@ -6,6 +6,9 @@ import org.hylee.phms.server.persistence.MealItemTemplateDO;
 
 import java.util.List;
 
+/**
+ * 饮食明细与食材模板查询数据访问（批量插入、按餐次/用户查询）。
+ */
 public interface MealItemMapper {
 
     int batchInsert(@Param("mealId") Long mealId, @Param("items") List<MealItemDO> items);

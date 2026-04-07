@@ -1,3 +1,6 @@
+<!--
+  数据源管理：列表、启停、编辑、删除，以及 CSV 导入健康指标/运动记录与同步任务列表。
+-->
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import Papa from "papaparse";
@@ -30,6 +33,10 @@ const createForm = ref({
   description: ""
 });
 
+// 不同导入类型的“模板与必填字段”配置。用于：
+// - 生成 CSV 模板
+// - 预览解析结果并提示缺失字段
+// - 控制“提交导入”按钮的可用性
 const importConfigs = {
   health_metric: {
     label: "健康指标 CSV",
@@ -89,6 +96,7 @@ const selectedSource = computed(() =>
 
 const currentImportConfig = computed(() => importConfigs[importCategory.value]);
 
+// 只有在 CSV 校验通过且选中“文件导入”类型的数据源时，才允许提交导入
 const canSubmitImport = computed(() =>
   Boolean(
     selectedFile.value &&
@@ -119,6 +127,7 @@ function clearMessages() {
 }
 
 function resetCsvPreview() {
+  // 切换导入类型/文件后重置预览与校验结果，避免旧数据误导用户
   previewHeaders.value = [];
   previewRows.value = [];
   csvCheck.value = createEmptyCsvCheck();
@@ -176,6 +185,7 @@ function taskCategoryText(category) {
 }
 
 function resolveCanonicalHeader(rawHeader) {
+  // 兼容不同 CSV 头字段写法：英文大小写、下划线/横线/空格，以及常见中文表头
   const header = String(rawHeader ?? "")
     .trim()
     .toLowerCase()

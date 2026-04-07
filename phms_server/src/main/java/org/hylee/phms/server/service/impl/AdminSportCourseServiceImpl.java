@@ -32,6 +32,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * {@link org.hylee.phms.server.service.AdminSportCourseService} 实现。
+ * <p>
+ * 课程 CRUD、字典维护、封面上传至本地静态目录等。
+ */
 @Service
 public class AdminSportCourseServiceImpl implements AdminSportCourseService {
 

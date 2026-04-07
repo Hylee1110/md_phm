@@ -10,6 +10,9 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
+/**
+ * 管理端创建/更新运动课程请求体（含关联字典 ID 列表等）。
+ */
 public record AdminSaveSportCourseRequest(
         @NotBlank(message = "name is required")
         @Size(max = 64, message = "name length must be <= 64")

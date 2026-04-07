@@ -9,6 +9,9 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
+/**
+ * 饮食记录中的单条食材明细请求体。
+ */
 public record MealItemRequest(
         @Positive(message = "foodId must be positive")
         Long foodId,

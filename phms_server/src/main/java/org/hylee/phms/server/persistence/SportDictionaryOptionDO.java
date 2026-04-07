@@ -1,5 +1,8 @@
 package org.hylee.phms.server.persistence;
 
+/**
+ * 运动课程字典选项持久化对象（受众、器械、收益等共用结构）。
+ */
 public class SportDictionaryOptionDO {
 
     private Long id;

@@ -2,6 +2,9 @@ package org.hylee.phms.server.vo;
 
 import java.time.LocalDateTime;
 
+/**
+ * 管理端普通用户列表行展示对象。
+ */
 public record AdminUserVO(
         Long userId,
         String account,

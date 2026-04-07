@@ -1,3 +1,6 @@
+<!--
+  管理端 - 用户：普通用户列表检索与账号状态（正常/异常/禁用）维护。
+-->
 <script setup>
 import { onMounted, ref } from "vue";
 import { adminApi } from "../services/adminApi";
@@ -20,6 +23,7 @@ function statusLabel(status) {
 }
 
 async function loadUsers() {
+  // keyword 为空时拉取全部普通用户；非空时后端模糊匹配账号/昵称/姓名
   loading.value = true;
   errorMsg.value = "";
   try {
@@ -35,6 +39,7 @@ async function updateStatus(user) {
   savingUserId.value = user.userId;
   errorMsg.value = "";
   try {
+    // 下拉变更后立即提交；v-model 已把新状态写在 user.accountStatus 上
     await adminApi.updateUserStatus(user.userId, user.accountStatus);
   } catch (error) {
     errorMsg.value = error.message;

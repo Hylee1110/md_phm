@@ -3,6 +3,9 @@ package org.hylee.phms.server.persistence;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 健康目标模板持久化对象（可被用户选择）。
+ */
 public class HealthGoalDO {
 
     private Long goalId;

@@ -22,6 +22,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * {@link org.hylee.phms.server.service.MealRecordService} 实现。
+ * <p>
+ * 支持关联推荐食谱计算营养参考值等业务逻辑。
+ */
 @Service
 public class MealRecordServiceImpl implements MealRecordService {
 

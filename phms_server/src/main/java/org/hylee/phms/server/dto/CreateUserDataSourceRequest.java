@@ -3,6 +3,9 @@ package org.hylee.phms.server.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * 新建用户数据源请求体。
+ */
 public record CreateUserDataSourceRequest(
         @NotBlank(message = "sourceName is required")
         @Size(max = 64, message = "sourceName length must be <= 64")

@@ -1,3 +1,6 @@
+/**
+ * 管理端 API：用户列表与状态、健康目标维护、运动课程维护等（路径前缀 /api/admin）。
+ */
 import { requestJson } from "./http";
 
 export const adminApi = {

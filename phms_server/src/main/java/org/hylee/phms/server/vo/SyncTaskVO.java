@@ -2,6 +2,9 @@ package org.hylee.phms.server.vo;
 
 import java.time.LocalDateTime;
 
+/**
+ * 数据导入/同步任务展示对象。
+ */
 public record SyncTaskVO(
         Long taskId,
         Long sourceId,

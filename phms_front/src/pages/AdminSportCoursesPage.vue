@@ -1,3 +1,6 @@
+<!--
+  管理端 - 运动课程：列表、详情编辑、字典项维护、封面上传与发布状态管理。
+-->
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { adminApi } from "../services/adminApi";
@@ -81,6 +84,7 @@ function resetCoverInput() {
 }
 
 function resetFormState() {
+  // 新建/编辑公用同一个表单：关闭或重置时要清空“当前编辑课程”与封面输入框
   editingCourseId.value = null;
   form.value = defaultForm();
   resetCoverInput();
@@ -92,6 +96,7 @@ function closeFormModal() {
 }
 
 async function openCreateModal() {
+  // 新建课程：打开弹窗并聚焦面板，便于键盘操作
   clearMessages();
   resetFormState();
   formModalOpen.value = true;
@@ -119,6 +124,7 @@ function levelText(level) {
 }
 
 function toggleMulti(field, id, checked) {
+  // 多选字典项（受众/器械/收益）维护成数组：用 Set 做去重与删除
   const current = new Set(form.value[field]);
   if (checked) {
     current.add(id);
@@ -147,6 +153,7 @@ function appendUniqueOption(type, option) {
 }
 
 async function createOption(type) {
+  // 在线新增字典项：创建成功后自动加入 options 列表，并默认勾选到当前课程表单
   const name = normalizeText(optionDraft.value[type]);
   if (!name) {
     errorMsg.value = "请输入选项名称";
@@ -180,6 +187,7 @@ async function createOption(type) {
 }
 
 async function uploadCover(event) {
+  // 上传封面：成功后仅写入 coverUrl，真正保存课程在提交表单时发生
   const [file] = event.target.files ?? [];
   if (!file) {
     return;
@@ -200,6 +208,7 @@ async function uploadCover(event) {
 }
 
 function toPayload() {
+  // 提交前统一做空串转 null、数字字段 Number 化；关联 ID 数组原样提交
   const name = normalizeText(form.value.name);
   if (!name) {
     throw new Error("课程名称不能为空");
@@ -223,6 +232,7 @@ function toPayload() {
 }
 
 function fillForm(course) {
+  // 列表行或详情接口返回均可填充；缺省字段用 defaultForm 中的业务默认值兜底
   form.value = {
     name: course.name ?? "",
     coverUrl: course.coverUrl ?? "",
@@ -242,6 +252,7 @@ function fillForm(course) {
 }
 
 async function loadOptions() {
+  // 受众/器械/功效三类字典，供表单多选与在线新增选项使用
   options.value = await adminApi.getSportCourseOptions();
 }
 
@@ -251,6 +262,7 @@ async function loadCourses(preserveMessages = false) {
     clearMessages();
   }
   try {
+    // status 为空表示不按状态过滤；keyword 支持按名称检索
     courses.value = await adminApi.listSportCourses({
       keyword: normalizeText(keyword.value),
       status: normalizeText(statusFilter.value)
@@ -272,6 +284,7 @@ async function editCourse(course) {
   clearMessages();
   formModalOpen.value = true;
   editingCourseId.value = courseId;
+  // 先用列表行数据即时填充，避免弹窗空白；再以详情接口覆盖（含完整关联 ID）
   fillForm(course);
   await focusModalPanel();
 
@@ -298,6 +311,7 @@ async function submitCourse() {
   clearMessages();
   try {
     const payload = toPayload();
+    // editingCourseId 有值表示更新，否则为新建；成功后刷新列表并关弹窗
     if (editingCourseId.value) {
       await adminApi.updateSportCourse(editingCourseId.value, payload);
       successMsg.value = "课程已更新";
@@ -315,6 +329,7 @@ async function submitCourse() {
 }
 
 async function removeCourse(courseId) {
+  // 若正在编辑同一门课，删成功后需关弹窗，避免编辑已不存在的 ID
   if (!window.confirm(`确认删除课程 #${courseId} 吗？`)) {
     return;
   }
@@ -342,6 +357,7 @@ function formatDateTime(value) {
   return String(value).replace("T", " ");
 }
 
+// 全屏弹窗打开时禁止背景滚动，关闭时恢复（组件卸载时兜底清理）
 watch(formModalOpen, (open) => {
   document.body.style.overflow = open ? "hidden" : "";
 });
@@ -353,6 +369,7 @@ onBeforeUnmount(() => {
 onMounted(async () => {
   clearMessages();
   try {
+    // 先字典后列表：列表渲染不依赖字典，但表单依赖 options
     await loadOptions();
     await loadCourses();
   } catch (error) {

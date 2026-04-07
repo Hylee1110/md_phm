@@ -6,6 +6,9 @@ import org.hylee.phms.server.persistence.UserDataSourceDO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 用户数据源配置数据访问（CRUD、同步快照更新等）。
+ */
 public interface UserDataSourceMapper {
 
     int insert(UserDataSourceDO sourceDO);

@@ -1,3 +1,6 @@
+<!--
+  健康目标（用户）：浏览可选目标、选择目标（可带个性化参数）、取消已选目标。
+-->
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { healthApi } from "../services/healthApi";
@@ -12,6 +15,7 @@ const appliedKeyword = ref("");
 const goals = ref([]);
 const myGoals = ref([]);
 
+// 已加入“我的目标”的 goalId 集合，用于在可选列表中高亮已选卡片
 const selectedGoalIds = computed(() => new Set(myGoals.value.map((item) => item.goalId)));
 
 function normalizeText(value) {
@@ -45,6 +49,7 @@ function goalIcon(goal) {
 }
 
 async function loadGoals() {
+  // 拉取系统内可选健康目标（受 appliedKeyword 影响）
   loading.value = true;
   clearMessages();
   try {
@@ -60,6 +65,7 @@ async function loadGoals() {
 
 async function loadMyGoals() {
   try {
+    // status: 0 表示进行中的用户目标（与后端约定一致）
     myGoals.value = await healthApi.listUserGoals({ status: 0 });
   } catch (error) {
     errorMsg.value = error.message;
@@ -67,6 +73,7 @@ async function loadMyGoals() {
 }
 
 async function loadPage() {
+  // 并行加载“可选列表”与“我的目标”，减少首屏等待
   await Promise.all([loadGoals(), loadMyGoals()]);
 }
 
@@ -85,6 +92,7 @@ async function selectGoal(goal) {
   selectingGoalId.value = goal.goalId;
   clearMessages();
   try {
+    // 第二参数可传目标区间等；当前一键选用默认配置，传空对象即可
     await healthApi.selectHealthGoal(goal.goalId, {});
     successMsg.value = `${goal.goalName} 已加入我的目标`;
     await loadPage();
@@ -96,6 +104,7 @@ async function selectGoal(goal) {
 }
 
 async function removeGoal(goal) {
+  // 从“我的目标”移除（后端为取消关联，非删除目标模板）
   if (!window.confirm(`确认移除目标“${goal.goalName}”吗？`)) {
     return;
   }

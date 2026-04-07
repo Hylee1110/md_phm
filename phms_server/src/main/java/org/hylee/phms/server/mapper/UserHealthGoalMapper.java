@@ -5,6 +5,9 @@ import org.hylee.phms.server.persistence.UserHealthGoalDO;
 
 import java.util.List;
 
+/**
+ * 用户与健康目标的关联数据访问（选择、列表、状态更新）。
+ */
 public interface UserHealthGoalMapper {
 
     UserHealthGoalDO selectByIdAndUser(@Param("userGoalId") Long userGoalId, @Param("userId") Long userId);

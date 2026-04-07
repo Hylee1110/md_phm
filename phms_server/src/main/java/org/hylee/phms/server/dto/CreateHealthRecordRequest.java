@@ -9,6 +9,9 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 在用户目标下新增健康打卡记录请求体。
+ */
 public record CreateHealthRecordRequest(
         @Digits(integer = 8, fraction = 2, message = "recordValue must match DECIMAL(10,2)")
         BigDecimal recordValue,

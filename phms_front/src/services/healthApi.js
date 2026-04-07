@@ -1,3 +1,6 @@
+/**
+ * 普通用户健康域 API：总览、档案、趋势、数据源、运动/饮食/目标等（路径前缀 /api/health）。
+ */
 import { requestJson } from "./http";
 
 export const healthApi = {

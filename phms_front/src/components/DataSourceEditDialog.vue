@@ -1,3 +1,6 @@
+<!--
+  数据源编辑弹层：创建或修改数据源名称、类型与说明（由数据源页调用）。
+-->
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { dataSourceApi } from "../services/dataSourceApi";
@@ -79,6 +82,7 @@ async function saveSource() {
   saving.value = true;
   errorMsg.value = "";
   try {
+    // 父组件监听 saved 刷新列表；弹层本身不负责关闭（可由父在回调里关）
     const saved = isEditMode.value
       ? await dataSourceApi.updateSource(props.source.sourceId, payload)
       : await dataSourceApi.createSource(payload);
@@ -95,6 +99,7 @@ watch(
   ([open]) => {
     if (open) {
       document.body.style.overflow = "hidden";
+      // source 变化时 resetForm 会 mapSourceToForm，编辑与新建共用同一表单状态机
       resetForm();
       return;
     }

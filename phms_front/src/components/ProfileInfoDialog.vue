@@ -1,3 +1,6 @@
+<!--
+  账号信息弹层：展示当前登录用户摘要（由 App 顶栏触发）。
+-->
 <script setup>
 import { onBeforeUnmount, ref, watch } from "vue";
 import { healthApi } from "../services/healthApi";
@@ -102,6 +105,7 @@ async function loadProfile({ keepMessages = false } = {}) {
     clearMessages();
   }
   try {
+    // 弹层每次打开都会拉最新档案；lastRecognizedIdCard 用于防抖重复识别
     const data = await healthApi.getProfile();
     profile.value = data;
     lastRecognizedIdCard.value = (data?.idcard ?? "").trim().toUpperCase();
@@ -114,6 +118,7 @@ async function loadProfile({ keepMessages = false } = {}) {
 }
 
 async function recognizeIdCard(silent = true) {
+  // 与 ProfilePage 逻辑一致：完整身份证号才请求后端解析
   const idcard = normalizedIdCard();
   if (!idcard) {
     if (!silent) {
@@ -160,6 +165,7 @@ async function saveProfile() {
   errorMsg.value = "";
   successMsg.value = "";
   try {
+    // 保存前静默识别，尽量补全性别年龄再提交 updateProfile
     await recognizeIdCard(true);
     const updated = await healthApi.updateProfile(buildPayload());
     profile.value = updated;
@@ -188,6 +194,7 @@ watch(
     document.body.style.overflow = "";
     clearRecognizeTimer();
     clearMessages();
+    // 关闭时不强制清空 profile，下次打开会重新 loadProfile 覆盖
   }
 );
 

@@ -16,6 +16,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * {@link org.hylee.phms.server.service.AdminHealthGoalService} 实现（需管理员权限，由拦截器保证）。
+ */
 @Service
 public class AdminHealthGoalServiceImpl implements AdminHealthGoalService {
 

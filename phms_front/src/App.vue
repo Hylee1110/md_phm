@@ -1,3 +1,6 @@
+<!--
+  应用根布局：水墨风顶栏、按角色生成的导航、页面标题区、子路由出口，以及账号信息弹层入口。
+-->
 <script setup>
 import { computed, ref } from "vue";
 import { RouterLink, RouterView, useRoute, useRouter } from "vue-router";
@@ -8,11 +11,13 @@ import { clearSessionUser, sessionState } from "./stores/session";
 const route = useRoute();
 const router = useRouter();
 
+// 各路由在 meta 中声明 title/subtitle，供主内容区页头展示（部分页用 hidePageHead 自行排版）
 const pageTitle = computed(() => route.meta.title || "PHMS");
 const pageSubtitle = computed(() => route.meta.subtitle || "");
 const isGuestPage = computed(() => Boolean(route.meta.guestOnly));
 const showPageHead = computed(() => !route.meta.hidePageHead);
 
+// accountLevel：1=管理员（管理端导航），0=普通用户（业务功能导航）；未登录不渲染顶栏导航
 const navItems = computed(() => {
   if (!sessionState.user) {
     return [];
@@ -51,6 +56,7 @@ const profileDialogOpen = ref(false);
 
 async function logout() {
   try {
+    // 通知后端销毁 session；失败也继续清前端状态，避免卡在半登出
     await authApi.logout();
   } finally {
     profileDialogOpen.value = false;
@@ -60,6 +66,7 @@ async function logout() {
 }
 
 function openAccountEntry() {
+  // 打开 ProfileInfoDialog：在弹层内可查看/编辑档案，不等同于独立「个人档案」整页
   profileDialogOpen.value = true;
 }
 </script>

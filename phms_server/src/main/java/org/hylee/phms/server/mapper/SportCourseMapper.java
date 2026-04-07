@@ -5,6 +5,9 @@ import org.hylee.phms.server.persistence.SportCourseDO;
 
 import java.util.List;
 
+/**
+ * 运动课程数据访问（用户端已发布列表、管理端维护与详情查询）。
+ */
 public interface SportCourseMapper {
 
     List<SportCourseDO> selectPublishedCourses(@Param("keyword") String keyword,

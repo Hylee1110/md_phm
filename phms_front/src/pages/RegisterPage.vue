@@ -1,3 +1,6 @@
+<!--
+  注册页：创建普通用户账号，可选填档案字段；成功后跳转登录或首页（依实现）。
+-->
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -20,6 +23,7 @@ async function submitRegister() {
   submitting.value = true;
   errorMsg.value = "";
   try {
+    // 注册成功不会自动登录；引导用户去登录页并预填账号 query
     await authApi.register(form.value);
     window.alert("注册成功，请登录");
     await router.push({ path: "/login", query: { account: form.value.account } });

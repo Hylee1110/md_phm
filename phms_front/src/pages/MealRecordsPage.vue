@@ -1,3 +1,6 @@
+<!--
+  饮食记录：关联食谱录入用餐、列表与编辑删除。
+-->
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { healthApi } from "../services/healthApi";
@@ -56,6 +59,7 @@ const selectedRecipe = computed(() => {
   return recipes.value.find((item) => item.recipeId === recipeId) || null;
 });
 
+// 按「每 100g 热量 × 实际摄入量(g)」估算本餐热量（仅前端预览，最终以服务端为准）
 const estimatedCaloriesPreview = computed(() => {
   const amount = toNumber(form.value.intakeAmount);
   const caloriesPer100g = toNumber(selectedRecipe.value?.calories);
@@ -66,6 +70,7 @@ const estimatedCaloriesPreview = computed(() => {
 });
 
 function defaultForm() {
+  // datetime-local 需要本地无时区偏移的 ISO 片段，避免显示与提交差 8 小时等问题
   const now = new Date();
   const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
     .toISOString()
@@ -390,6 +395,7 @@ async function loadRecords({ keepMessages = false } = {}) {
     clearMessages();
   }
   try {
+    // 主列表：受 query 时间范围与 limit 约束；并为每条记录补全下拉中的食谱选项
     records.value = await healthApi.listMealRecords(buildListParams());
     records.value.forEach((record) => ensureRecipeOption(record));
   } catch (error) {
@@ -405,6 +411,7 @@ async function loadTrendRecords({ keepError = false } = {}) {
     trendErrorMsg.value = "";
   }
   try {
+    // 趋势图单独拉宽时间窗的数据，与主列表筛选条件解耦
     const range = trendWindow(trendRange.value);
     const params = {
       limit: 200
@@ -429,6 +436,7 @@ async function loadRecipes() {
       keyword: normalizeText(recipeKeyword.value),
       limit: 100
     });
+    // 合并：保留历史已选食谱，避免编辑旧记录时下拉丢失条目
     const merged = [...loaded];
     recipes.value.forEach((item) => {
       if (!merged.some((candidate) => candidate.recipeId === item.recipeId)) {
@@ -444,6 +452,7 @@ async function loadRecipes() {
 }
 
 async function submitRecord() {
+  // 本页仅支持编辑已有记录；新建入口若在其他页需单独对接 create 接口
   if (!editingRecordId.value) {
     return;
   }
@@ -466,6 +475,7 @@ async function submitRecord() {
 }
 
 async function deleteRecord(recordId) {
+  // 删除后同步刷新主列表与趋势数据，避免图表仍含已删点
   if (!window.confirm(`确认删除饮食记录 #${recordId} 吗？`)) {
     return;
   }

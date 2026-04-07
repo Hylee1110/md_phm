@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+/**
+ * 用户注册请求体（账号、密码与可选档案字段）。
+ */
 public record RegisterRequest(
         @NotBlank(message = "账号不能为空")
         @Size(min = 4, max = 32, message = "账号长度必须在 4 到 32 之间")

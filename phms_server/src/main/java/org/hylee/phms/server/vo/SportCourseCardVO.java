@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 用户端运动课程卡片展示数据（含评分摘要与标签）。
+ */
 public record SportCourseCardVO(
         Long id,
         String name,

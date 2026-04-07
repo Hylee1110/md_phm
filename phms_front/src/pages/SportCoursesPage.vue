@@ -1,3 +1,6 @@
+<!--
+  运动课程（用户）：浏览已发布课程列表并对课程评分。
+-->
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import { healthApi } from "../services/healthApi";
@@ -310,6 +313,7 @@ async function loadCourses() {
   coursesLoading.value = true;
   clearMessages();
   try {
+    // 用户端课程广场：关键词 + limit；难度/排序由前端 displayCourses 二次处理
     courses.value = await healthApi.listSportCourses({
       keyword: normalizeText(keyword.value),
       limit: 60
@@ -348,6 +352,7 @@ async function submitCourseRating(course, score) {
   ratingCourseId.value = course.id;
   clearMessages();
   try {
+    // 评分后接口返回新的平均分与当前用户分数，用于就地更新卡片与详情
     const rating = await healthApi.rateSportCourse(course.id, { score });
     patchCourse(course.id, {
       ratingAvg: rating.ratingAvg,
@@ -363,6 +368,7 @@ async function submitCourseRating(course, score) {
 }
 
 async function completeCheckin(course) {
+  // 从课程详情「打卡」：写入一条运动记录（时长换算热量、固定时刻占位等由产品约定）
   const draft = ensureCheckinDraft(course);
   const date = normalizeText(draft.date);
   const normalized = normalizeHourMinute(draft.durationHour, draft.durationMinute);
@@ -390,6 +396,7 @@ async function completeCheckin(course) {
     await healthApi.createExerciseRecord({
       sportId: course.id,
       sportName: null,
+      // 快捷打卡未采集具体时刻，使用固定 08:00 占位（与后端存储格式一致）
       recordTime: `${date}T08:00`,
       durationMin,
       caloriesKcal,

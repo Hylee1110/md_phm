@@ -6,6 +6,11 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * 演示/兜底用的健康指标内存数据源。
+ * <p>
+ * 在无真实数据或开发演示场景下可提供固定序列指标，具体是否被引用由业务层决定。
+ */
 @Repository
 public class MockHealthDataRepository {
 

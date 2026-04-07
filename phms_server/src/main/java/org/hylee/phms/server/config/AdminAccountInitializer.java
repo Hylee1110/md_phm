@@ -8,6 +8,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * 默认管理员账号初始化器。
+ * <p>
+ * 启动时检查是否存在账号 {@code admin}，若不存在则创建默认管理员用户。
+ * 该逻辑用于“开箱即用”的开发体验，避免首次启动后无法登录管理端。
+ */
 @Component
 public class AdminAccountInitializer implements CommandLineRunner {
 

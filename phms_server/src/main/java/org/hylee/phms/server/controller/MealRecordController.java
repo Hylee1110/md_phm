@@ -24,6 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 饮食记录接口。
+ * <p>
+ * 用于记录用户每日饮食（餐次/食物/营养估算等），支持按时间范围查询与增删改查。
+ */
 @Validated
 @RestController
 @RequestMapping("/api/health/meal-records")
@@ -35,6 +40,9 @@ public class MealRecordController {
         this.mealRecordService = mealRecordService;
     }
 
+    /**
+     * 查询饮食记录列表（支持时间范围过滤）。
+     */
     @GetMapping
     public ApiResponse<List<MealRecord>> list(
             @RequestParam(name = "startTime", required = false)
@@ -50,6 +58,9 @@ public class MealRecordController {
         return ApiResponse.success(mealRecordService.listRecords(startTime, endTime, limit));
     }
 
+    /**
+     * 查询单条饮食记录详情。
+     */
     @GetMapping("/{recordId:\\d+}")
     public ApiResponse<MealRecord> detail(
             @PathVariable("recordId")
@@ -58,11 +69,17 @@ public class MealRecordController {
         return ApiResponse.success(mealRecordService.getRecord(recordId));
     }
 
+    /**
+     * 新增饮食记录。
+     */
     @PostMapping
     public ApiResponse<MealRecord> create(@Valid @RequestBody CreateMealRecordRequest request) {
         return ApiResponse.success("created", mealRecordService.createRecord(request));
     }
 
+    /**
+     * 更新饮食记录。
+     */
     @PutMapping("/{recordId:\\d+}")
     public ApiResponse<MealRecord> update(
             @PathVariable("recordId")
@@ -72,6 +89,9 @@ public class MealRecordController {
         return ApiResponse.success("updated", mealRecordService.updateRecord(recordId, request));
     }
 
+    /**
+     * 删除饮食记录。
+     */
     @DeleteMapping("/{recordId:\\d+}")
     public ApiResponse<Void> delete(
             @PathVariable("recordId")

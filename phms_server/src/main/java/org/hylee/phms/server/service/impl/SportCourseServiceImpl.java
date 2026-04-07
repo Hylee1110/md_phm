@@ -19,6 +19,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * {@link org.hylee.phms.server.service.SportCourseService} 实现。
+ */
 @Service
 public class SportCourseServiceImpl implements SportCourseService {
 

@@ -1,3 +1,6 @@
+<!--
+  健康趋势：按天数拉取指标序列并可视化（步数、心率、睡眠、血压等）。
+-->
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { healthApi } from "../services/healthApi";
@@ -467,6 +470,7 @@ async function loadMetrics() {
   loading.value = true;
   errorMsg.value = "";
   try {
+    // 后端按「最近 N 天」返回每日一条聚合指标（步数、心率、睡眠、血压等）
     metrics.value = await healthApi.getMetrics(queryDays.value);
   } catch (error) {
     errorMsg.value = error.message;
@@ -480,6 +484,7 @@ function changeRange(days) {
     return;
   }
   queryDays.value = days;
+  // 切换天数后重新拉序列；已有数据且天数未变则跳过避免无意义请求
   loadMetrics();
 }
 

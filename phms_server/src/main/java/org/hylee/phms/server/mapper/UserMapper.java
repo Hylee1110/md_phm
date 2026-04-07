@@ -5,6 +5,9 @@ import org.hylee.phms.server.persistence.UserDO;
 
 import java.util.List;
 
+/**
+ * 用户表数据访问。SQL 映射见 {@code classpath:/mapper/UserMapper.xml}。
+ */
 public interface UserMapper {
 
     UserDO selectById(@Param("userId") Long userId);

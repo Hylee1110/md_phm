@@ -3,6 +3,9 @@ package org.hylee.phms.server.persistence;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 饮食推荐/食谱持久化对象。
+ */
 public class MealRecommendationDO {
 
     private Long recipeId;

@@ -11,6 +11,9 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 新增饮食记录请求体（可关联推荐食谱）。
+ */
 public record CreateMealRecordRequest(
         @NotNull(message = "recipeId is required")
         @Positive(message = "recipeId must be positive")

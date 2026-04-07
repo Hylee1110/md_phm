@@ -3,6 +3,9 @@ package org.hylee.phms.server.persistence;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 健康打卡记录持久化对象（关联用户目标与目标模板）。
+ */
 public class HealthRecordDO {
 
     private Long recordId;

@@ -5,6 +5,9 @@ import org.hylee.phms.server.persistence.SyncTaskDO;
 
 import java.util.List;
 
+/**
+ * 数据导入/同步任务记录数据访问。
+ */
 public interface SyncTaskMapper {
 
     int insert(SyncTaskDO taskDO);

@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+/**
+ * {@link org.hylee.phms.server.service.ExerciseRecordService} 实现（按当前登录用户隔离数据）。
+ */
 @Service
 public class ExerciseRecordServiceImpl implements ExerciseRecordService {
 

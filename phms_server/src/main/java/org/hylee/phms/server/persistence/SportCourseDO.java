@@ -3,6 +3,9 @@ package org.hylee.phms.server.persistence;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 运动课程持久化对象（封面、难度、关联字典 ID 列表等）。
+ */
 public class SportCourseDO {
 
     private Long id;

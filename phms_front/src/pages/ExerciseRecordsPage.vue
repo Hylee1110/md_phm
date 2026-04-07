@@ -1,3 +1,6 @@
+<!--
+  运动记录：按时间范围查询、查看详情、删除记录（当前用户数据）。
+-->
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { healthApi } from "../services/healthApi";
@@ -281,6 +284,7 @@ async function loadRecords({ keepMessages = false } = {}) {
     clearMessages();
   }
   try {
+    // 主列表：时间范围 + limit，与趋势图数据源分离
     records.value = await healthApi.listExerciseRecords(buildListParams());
   } catch (error) {
     errorMsg.value = error.message;
@@ -320,7 +324,7 @@ async function loadCourseNames() {
     }
     courseNameMap.value = map;
   } catch (error) {
-    // Keep fallback name "运动 #ID" when course names cannot be loaded.
+    // 课程名拉取失败时仍可用 resolveRecordName 回退为「运动 #ID」
     courseNameMap.value = {};
   }
 }
@@ -335,6 +339,7 @@ function changeTrendRange(value) {
 }
 
 async function deleteRecord(recordId) {
+  // 与饮食记录页一致：删后双刷列表与趋势，保证 UI 一致
   if (!window.confirm(`确认删除记录 #${recordId} 吗？`)) {
     return;
   }
@@ -354,6 +359,7 @@ async function deleteRecord(recordId) {
   }
 }
 
+// 将 trendRecords 按日汇总卡路里，供 SVG 折线/柱图使用
 const trendSeries = computed(() => {
   const map = new Map();
   for (const item of trendRecords.value) {

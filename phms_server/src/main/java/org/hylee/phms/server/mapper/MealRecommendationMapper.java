@@ -5,6 +5,9 @@ import org.hylee.phms.server.persistence.MealRecommendationDO;
 
 import java.util.List;
 
+/**
+ * 饮食推荐（食谱）数据访问，含列表筛选与软删除。
+ */
 public interface MealRecommendationMapper {
 
     int insert(MealRecommendationDO recommendationDO);

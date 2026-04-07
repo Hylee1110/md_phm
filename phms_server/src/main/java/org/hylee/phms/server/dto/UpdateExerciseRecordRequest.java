@@ -11,6 +11,9 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 更新运动记录请求体。
+ */
 public record UpdateExerciseRecordRequest(
         @Positive(message = "sportId must be positive")
         Long sportId,

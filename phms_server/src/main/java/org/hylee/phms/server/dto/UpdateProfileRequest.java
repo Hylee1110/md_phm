@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
+/**
+ * 更新当前用户个人档案请求体。
+ */
 public record UpdateProfileRequest(
         @Size(max = 64, message = "昵称长度不能超过 64")
         String nickname,

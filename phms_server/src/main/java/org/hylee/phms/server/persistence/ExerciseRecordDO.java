@@ -3,6 +3,9 @@ package org.hylee.phms.server.persistence;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 运动记录持久化对象。
+ */
 public class ExerciseRecordDO {
 
     private Long recordId;

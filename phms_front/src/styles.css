@@ -1,3 +1,4 @@
+/* 全局样式：水墨纸质感主题变量、布局与组件通用类（与 App.vue 结构配合）。 */
 :root {
   --paper: #fcfcfa;
   --paper-strong: #ffffff;

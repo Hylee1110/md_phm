@@ -9,6 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/**
+ * 管理端运动课程维护服务。
+ * <p>
+ * 课程全生命周期、字典选项与封面上传。
+ */
 public interface AdminSportCourseService {
 
     List<SportCourseAdminVO> listCourses(String keyword, String status);

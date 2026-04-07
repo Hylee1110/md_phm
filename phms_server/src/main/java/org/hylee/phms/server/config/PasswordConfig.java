@@ -6,7 +6,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
+/**
+ * 密码编码器配置。
+ * <p>
+ * 当前实现使用 MD5（用于与既有数据/逻辑兼容）。
+ * 注意：MD5 并不适合作为强安全场景下的密码哈希算法；如果未来要提升安全性，
+ * 需要配合数据迁移（存量密码重置/升级）再切换到 BCrypt/Argon2 等算法。
+ */
 @Configuration
 public class PasswordConfig {
 
@@ -18,7 +26,8 @@ public class PasswordConfig {
                 if (rawPassword == null) {
                     return null;
                 }
-                return DigestUtils.md5DigestAsHex(rawPassword.toString().getBytes(StandardCharsets.UTF_8));
+                byte[] bytes = rawPassword.toString().getBytes(StandardCharsets.UTF_8);
+                return DigestUtils.md5DigestAsHex(Objects.requireNonNull(bytes));
             }
 
             @Override

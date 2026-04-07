@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 运动课程字典数据启动初始化。
+ * <p>
+ * 在库中不存在对应选项时，批量插入受众、器械、收益等默认词条，避免管理端表单无下拉数据。
+ */
 @Component
 public class SportDictionaryInitializer implements CommandLineRunner {
 

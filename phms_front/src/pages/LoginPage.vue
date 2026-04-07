@@ -1,3 +1,6 @@
+<!--
+  登录页：账号密码登录，成功后写入会话并跳转普通用户或管理员首页。
+-->
 <script setup>
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -18,6 +21,7 @@ async function submitLogin() {
   submitting.value = true;
   errorMsg.value = "";
   try {
+    // 登录成功后由后端写入 session Cookie；前端同步更新内存中的 sessionState 并跳转首页
     const user = await authApi.login(form.value);
     setSessionUser(user);
     await router.push(userHomePath());

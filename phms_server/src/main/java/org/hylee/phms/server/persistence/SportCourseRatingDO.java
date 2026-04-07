@@ -2,6 +2,9 @@ package org.hylee.phms.server.persistence;
 
 import java.math.BigDecimal;
 
+/**
+ * 运动课程评分查询/展示用持久化对象。
+ */
 public class SportCourseRatingDO {
 
     private Long courseId;

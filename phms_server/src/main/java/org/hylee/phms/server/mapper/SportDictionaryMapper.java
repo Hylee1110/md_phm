@@ -5,6 +5,9 @@ import org.hylee.phms.server.persistence.SportDictionaryOptionDO;
 
 import java.util.List;
 
+/**
+ * 运动课程字典（受众、器械、收益）数据访问。
+ */
 public interface SportDictionaryMapper {
 
     List<SportDictionaryOptionDO> selectAudiences();

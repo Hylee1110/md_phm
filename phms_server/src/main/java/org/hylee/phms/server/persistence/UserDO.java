@@ -2,6 +2,9 @@ package org.hylee.phms.server.persistence;
 
 import java.time.LocalDateTime;
 
+/**
+ * 用户表持久化对象（登录账号、档案字段、账号级别与状态等）。
+ */
 public class UserDO {
 
     private Long userId;

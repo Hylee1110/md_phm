@@ -10,6 +10,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * {@link org.hylee.phms.server.service.AdminUserService} 实现：普通用户列表与状态更新。
+ */
 @Service
 public class AdminUserServiceImpl implements AdminUserService {
 

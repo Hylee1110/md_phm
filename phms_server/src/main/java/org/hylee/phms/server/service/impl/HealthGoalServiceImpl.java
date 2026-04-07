@@ -19,6 +19,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * {@link org.hylee.phms.server.service.HealthGoalService} 实现。
+ */
 @Service
 public class HealthGoalServiceImpl implements HealthGoalService {
 

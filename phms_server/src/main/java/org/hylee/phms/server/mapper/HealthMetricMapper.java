@@ -6,6 +6,9 @@ import org.hylee.phms.server.persistence.HealthMetricDO;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * 健康指标数据访问（按用户、按测量日期的查询与更新）。
+ */
 public interface HealthMetricMapper {
 
     HealthMetricDO selectLatestMetricByUser(@Param("userId") Long userId);

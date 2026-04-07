@@ -20,6 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 运动课程接口（普通用户侧）。
+ * <p>
+ * 用于浏览已发布课程并对课程进行评分。
+ */
 @Validated
 @RestController
 @RequestMapping("/api/health/sport-courses")
@@ -31,6 +36,9 @@ public class SportCourseController {
         this.sportCourseService = sportCourseService;
     }
 
+    /**
+     * 查询已发布课程列表（支持关键字过滤）。
+     */
     @GetMapping
     public ApiResponse<List<SportCourseCardVO>> listCourses(
             @RequestParam(name = "keyword", required = false) String keyword,
@@ -41,6 +49,9 @@ public class SportCourseController {
         return ApiResponse.success(sportCourseService.listPublishedCourses(keyword, limit));
     }
 
+    /**
+     * 对指定课程进行评分。
+     */
     @PostMapping("/{courseId}/ratings")
     public ApiResponse<SportCourseRatingVO> rateCourse(
             @PathVariable("courseId")

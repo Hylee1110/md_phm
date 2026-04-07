@@ -9,6 +9,9 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
+/**
+ * 新建饮食推荐/食谱请求体。
+ */
 public record CreateMealRecommendationRequest(
         @NotBlank(message = "foodName is required")
         @Size(max = 100, message = "foodName length must be <= 100")

@@ -14,6 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+/**
+ * {@link org.hylee.phms.server.service.AuthService} 实现。
+ * <p>
+ * 注册写入用户表；登录校验密码与账号状态后把用户 ID 写入 session；登出销毁 session。
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
 

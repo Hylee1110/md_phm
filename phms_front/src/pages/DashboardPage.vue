@@ -1,3 +1,6 @@
+<!--
+  健康总览：展示仪表盘摘要、最新指标与系统建议文案。
+-->
 <script setup>
 import { onMounted, ref } from "vue";
 import { dataSourceApi } from "../services/dataSourceApi";
@@ -64,6 +67,7 @@ async function loadDashboard() {
   loading.value = true;
   errorMsg.value = "";
   try {
+    // 仪表盘与数据源概览分属两个接口，并行请求加快首屏
     const [dashboardData, overviewData] = await Promise.all([
       healthApi.getDashboard(),
       dataSourceApi.getOverview()

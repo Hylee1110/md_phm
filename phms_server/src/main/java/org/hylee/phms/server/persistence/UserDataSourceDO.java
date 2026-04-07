@@ -2,6 +2,9 @@ package org.hylee.phms.server.persistence;
 
 import java.time.LocalDateTime;
 
+/**
+ * 用户数据源配置持久化对象。
+ */
 public class UserDataSourceDO {
 
     private Long sourceId;

@@ -3,6 +3,9 @@ package org.hylee.phms.server.persistence;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 饮食记录持久化对象（可关联推荐食谱、软删除状态等）。
+ */
 public class MealRecordDO {
 
     private Long recordId;

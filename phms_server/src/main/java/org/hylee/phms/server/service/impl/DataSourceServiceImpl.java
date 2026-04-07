@@ -42,6 +42,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * {@link org.hylee.phms.server.service.DataSourceService} 实现。
+ * <p>
+ * 当前用户数据源 CRUD、CSV/文本类文件解析导入（健康指标与运动记录）、同步任务记录与概览聚合；
+ * 具体解析规则与字段映射见类内私有方法与常量。
+ */
 @Service
 public class DataSourceServiceImpl implements DataSourceService {
 

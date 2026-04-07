@@ -20,6 +20,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * {@link org.hylee.phms.server.service.HealthRecordService} 实现。
+ * <p>
+ * 校验 userGoalId 归属当前用户后再读写打卡记录。
+ */
 @Service
 public class HealthRecordServiceImpl implements HealthRecordService {
 

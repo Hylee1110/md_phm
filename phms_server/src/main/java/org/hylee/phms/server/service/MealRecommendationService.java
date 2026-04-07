@@ -10,6 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/**
+ * 饮食推荐（食谱）领域服务。
+ * <p>
+ * 食谱 CRUD、图片上传与用户评分。
+ */
 public interface MealRecommendationService {
 
     List<MealRecommendationVO> listRecommendations(String keyword, Integer mealType, Integer limit);

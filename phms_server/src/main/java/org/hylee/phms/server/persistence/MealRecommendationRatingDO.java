@@ -2,6 +2,9 @@ package org.hylee.phms.server.persistence;
 
 import java.math.BigDecimal;
 
+/**
+ * 食谱评分查询/展示用持久化对象（聚合均值、次数与当前用户打分）。
+ */
 public class MealRecommendationRatingDO {
 
     private Long recipeId;

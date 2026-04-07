@@ -16,6 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * 登录与权限拦截器。
+ * <p>
+ * 对非公开路径校验 session、加载用户、禁止禁用账号访问；
+ * 对 {@code /api/admin/**} 校验管理员级别；对“账号异常”用户限制非 GET 写操作。
+ * 请求结束后在 {@link #afterCompletion} 中清理 {@link org.hylee.phms.server.context.LoginUserHolder}。
+ */
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 

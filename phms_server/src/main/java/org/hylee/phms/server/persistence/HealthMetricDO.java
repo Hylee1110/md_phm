@@ -2,6 +2,9 @@ package org.hylee.phms.server.persistence;
 
 import java.time.LocalDate;
 
+/**
+ * 健康指标日汇总持久化对象（步数、睡眠、血压等及数据来源关联）。
+ */
 public class HealthMetricDO {
     private Long id;
     private Long userId;

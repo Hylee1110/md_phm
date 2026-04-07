@@ -1,3 +1,9 @@
+/**
+ * Vue Router 配置与全局前置守卫。
+ *
+ * 约定 meta：guestOnly（仅访客）、requiresAuth、role（user|admin）；
+ * 进入路由前会先调用 ensureSessionLoaded() 拉取会话，再按角色重定向到合适首页。
+ */
 import { createRouter, createWebHistory } from "vue-router";
 import AdminHealthGoalsPage from "../pages/AdminHealthGoalsPage.vue";
 import AdminSportCoursesPage from "../pages/AdminSportCoursesPage.vue";
@@ -181,21 +187,26 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
+  // 进入任何路由前先确保会话已初始化，避免刷新后出现“已登录但路由被当成未登录”的闪烁
   await ensureSessionLoaded();
   const currentUser = sessionState.user;
 
+  // 已登录用户不应再进入 login/register 等访客页
   if (to.meta.guestOnly && currentUser) {
     return userHomePath();
   }
 
+  // 需要登录但未登录时统一跳转登录页
   if (to.meta.requiresAuth && !currentUser) {
     return "/login";
   }
 
+  // 管理端路由：要求 accountLevel === 1（与后端管理员约定一致）
   if (to.meta.role === "admin" && currentUser?.accountLevel !== 1) {
     return userHomePath();
   }
 
+  // 普通用户路由：要求 accountLevel === 0（管理员误入则送回管理端首页）
   if (to.meta.role === "user" && currentUser?.accountLevel !== 0) {
     return userHomePath();
   }

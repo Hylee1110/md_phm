@@ -9,6 +9,9 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
+/**
+ * 管理端创建/更新健康目标模板请求体。
+ */
 public record AdminSaveHealthGoalRequest(
         @NotBlank(message = "goalCode is required")
         @Size(max = 64, message = "goalCode length must be <= 64")

@@ -1,3 +1,6 @@
+<!--
+  个人档案：查看与编辑基础信息，支持身份证号辅助解析填表。
+-->
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -311,6 +314,7 @@ async function loadProfile() {
   errorMsg.value = "";
   successMsg.value = "";
   try {
+    // 档案 GET 后同步表单与「上次已识别身份证」缓存，避免重复打识别接口
     const data = await healthApi.getProfile();
     profile.value = data;
     lastRecognizedIdCard.value = (data?.idcard ?? "").trim().toUpperCase();
@@ -323,6 +327,7 @@ async function loadProfile() {
 }
 
 async function recognizeIdCard(silent = true) {
+  // silent=true 用于保存前自动补全；false 时在用户主动触发场景展示错误
   const idcard = normalizedIdCard();
   if (!idcard) {
     if (!silent) {
@@ -371,6 +376,7 @@ async function saveProfile() {
   errorMsg.value = "";
   successMsg.value = "";
   try {
+    // 先静默识别身份证以回填性别年龄，再提交 updateProfile
     await recognizeIdCard(true);
     const updated = await healthApi.updateProfile(buildPayload());
     profile.value = updated;
@@ -392,6 +398,7 @@ async function loadRecords() {
   recordsLoading.value = true;
   goalErrorMsg.value = "";
   try {
+    // 健康记录按「当前选中的用户目标」拉取；rangeDays 为 null 表示全量（上限由 limit 约束）
     records.value = await healthApi.listHealthRecords(selectedGoal.value.userGoalId, {
       rangeDays: activeRange.value === "all" ? null : Number(activeRange.value),
       limit: activeRange.value === "all" ? 1000 : 400
@@ -407,6 +414,7 @@ async function loadGoalSection() {
   goalsLoading.value = true;
   clearGoalMessages();
   try {
+    // 与 HealthGoalsPage 一致：只展示进行中的关联目标，并校正当前 tab 选中项
     const data = await healthApi.listUserGoals({ status: 0 });
     userGoals.value = data;
     if (!selectedUserGoalId.value || !data.some((item) => item.userGoalId === selectedUserGoalId.value)) {
@@ -469,6 +477,7 @@ async function submitRecord() {
   recordSaving.value = true;
   clearGoalMessages();
   try {
+    // 弹窗内新建一条健康记录：数值型走 recordValue，文本/布尔走 recordText
     if (!normalizeText(recordForm.value.remark)) {
       throw new Error("请输入记录标题");
     }

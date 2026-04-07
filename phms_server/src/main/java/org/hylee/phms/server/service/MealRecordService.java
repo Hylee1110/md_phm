@@ -7,6 +7,9 @@ import org.hylee.phms.server.dto.UpdateMealRecordRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 饮食记录领域服务（当前用户维度）。
+ */
 public interface MealRecordService {
 
     MealRecord createRecord(CreateMealRecordRequest request);

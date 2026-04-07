@@ -3,6 +3,9 @@ package org.hylee.phms.server.persistence;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 食材模板/历史选用记录持久化对象（用于快速录入联想）。
+ */
 public class MealItemTemplateDO {
 
     private Long itemId;

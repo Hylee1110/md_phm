@@ -6,6 +6,9 @@ import org.hylee.phms.server.persistence.ExerciseRecordDO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 运动记录数据访问（含外部键去重查询）。
+ */
 public interface ExerciseRecordMapper {
 
     int insert(ExerciseRecordDO recordDO);

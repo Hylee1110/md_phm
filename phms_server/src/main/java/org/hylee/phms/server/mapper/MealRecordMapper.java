@@ -6,6 +6,9 @@ import org.hylee.phms.server.persistence.MealRecordDO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 饮食记录数据访问（时间范围列表、软删除）。
+ */
 public interface MealRecordMapper {
 
     int insert(MealRecordDO mealRecordDO);

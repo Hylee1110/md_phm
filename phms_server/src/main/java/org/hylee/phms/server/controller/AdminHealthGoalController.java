@@ -20,6 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 管理端-健康目标维护接口。
+ * <p>
+ * 提供健康目标的列表查询、创建与更新能力。
+ */
 @Validated
 @RestController
 @RequestMapping("/api/admin/health-goals")
@@ -31,6 +36,9 @@ public class AdminHealthGoalController {
         this.adminHealthGoalService = adminHealthGoalService;
     }
 
+    /**
+     * 查询健康目标列表（支持关键字与状态过滤）。
+     */
     @GetMapping
     public ApiResponse<List<AdminHealthGoalVO>> listGoals(
             @RequestParam(name = "keyword", required = false) String keyword,
@@ -41,11 +49,17 @@ public class AdminHealthGoalController {
         return ApiResponse.success(adminHealthGoalService.listGoals(keyword, status));
     }
 
+    /**
+     * 创建健康目标。
+     */
     @PostMapping
     public ApiResponse<AdminHealthGoalVO> createGoal(@Valid @RequestBody AdminSaveHealthGoalRequest request) {
         return ApiResponse.success("created", adminHealthGoalService.createGoal(request));
     }
 
+    /**
+     * 更新健康目标。
+     */
     @PutMapping("/{goalId}")
     public ApiResponse<AdminHealthGoalVO> updateGoal(
             @PathVariable("goalId")

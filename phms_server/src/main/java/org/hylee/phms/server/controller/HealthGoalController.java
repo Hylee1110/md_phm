@@ -21,6 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 健康目标相关接口（普通用户）。
+ * <p>
+ * 包含：
+ * <ul>
+ *   <li>可选健康目标列表</li>
+ *   <li>用户已选择的目标列表</li>
+ *   <li>选择/取消目标</li>
+ * </ul>
+ */
 @Validated
 @RestController
 @RequestMapping("/api/health")
@@ -32,12 +42,18 @@ public class HealthGoalController {
         this.healthGoalService = healthGoalService;
     }
 
+    /**
+     * 查询可选健康目标列表（支持关键字过滤）。
+     */
     @GetMapping("/goals")
     public ApiResponse<List<HealthGoalCardVO>> listGoals(
             @RequestParam(name = "keyword", required = false) String keyword) {
         return ApiResponse.success(healthGoalService.listAvailableGoals(keyword));
     }
 
+    /**
+     * 查询当前用户的目标列表（可按状态过滤）。
+     */
     @GetMapping("/user-goals")
     public ApiResponse<List<UserHealthGoalVO>> listUserGoals(
             @RequestParam(name = "status", required = false)
@@ -47,6 +63,9 @@ public class HealthGoalController {
         return ApiResponse.success(healthGoalService.listUserGoals(status));
     }
 
+    /**
+     * 选择一个健康目标（可携带个性化配置入参）。
+     */
     @PostMapping("/goals/{goalId}/select")
     public ApiResponse<UserHealthGoalVO> selectGoal(
             @PathVariable("goalId")
@@ -56,6 +75,9 @@ public class HealthGoalController {
         return ApiResponse.success("selected", healthGoalService.selectGoal(goalId, request));
     }
 
+    /**
+     * 取消已选择的目标。
+     */
     @DeleteMapping("/user-goals/{userGoalId}")
     public ApiResponse<Void> cancelGoal(
             @PathVariable("userGoalId")

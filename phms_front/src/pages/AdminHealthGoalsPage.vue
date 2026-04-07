@@ -1,3 +1,6 @@
+<!--
+  管理端 - 健康目标：列表筛选、新建与编辑目标模板。
+-->
 <script setup>
 import { onMounted, ref } from "vue";
 import { adminApi } from "../services/adminApi";
@@ -102,6 +105,7 @@ async function loadGoals(preserveMessages = false) {
     clearMessages();
   }
   try {
+    // 管理端目标模板列表：keyword + 启用/停用筛选；空 status 表示不过滤状态
     goals.value = await adminApi.listHealthGoals({
       keyword: normalizeText(keyword.value),
       status: statusFilter.value === "" ? "" : Number(statusFilter.value)
@@ -170,6 +174,7 @@ async function submitGoal() {
   clearMessages();
   try {
     const payload = toPayload();
+    // editingGoalId 有值走更新，否则新建；成功后保留提示信息并刷新列表
     if (editingGoalId.value) {
       await adminApi.updateHealthGoal(editingGoalId.value, payload);
       await loadGoals(true);

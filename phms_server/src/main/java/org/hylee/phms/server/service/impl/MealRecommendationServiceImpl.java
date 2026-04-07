@@ -34,6 +34,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * {@link org.hylee.phms.server.service.MealRecommendationService} 实现。
+ * <p>
+ * 食谱持久化、本地静态目录图片存储与评分去重/聚合等。
+ */
 @Service
 public class MealRecommendationServiceImpl implements MealRecommendationService {
 

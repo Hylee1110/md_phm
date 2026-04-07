@@ -27,6 +27,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/**
+ * 饮食推荐（食谱）接口。
+ * <p>
+ * 提供食谱推荐的查询、新增、更新、删除，以及图片上传与评分能力。
+ */
 @Validated
 @RestController
 @RequestMapping("/api/health/meal-recommendations")
@@ -38,6 +43,9 @@ public class MealRecommendationController {
         this.mealRecommendationService = mealRecommendationService;
     }
 
+    /**
+     * 查询食谱推荐列表（支持关键字、餐次类型过滤）。
+     */
     @GetMapping
     public ApiResponse<List<MealRecommendationVO>> listRecommendations(
             @RequestParam(name = "keyword", required = false) String keyword,
@@ -52,17 +60,26 @@ public class MealRecommendationController {
         return ApiResponse.success(mealRecommendationService.listRecommendations(keyword, mealType, limit));
     }
 
+    /**
+     * 新增食谱推荐（通常由管理员或有权限用户创建）。
+     */
     @PostMapping
     public ApiResponse<MealRecommendationVO> createRecommendation(
             @Valid @RequestBody CreateMealRecommendationRequest request) {
         return ApiResponse.success("created", mealRecommendationService.createRecommendation(request));
     }
 
+    /**
+     * 上传食谱图片（返回可访问的图片信息/地址）。
+     */
     @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<MealRecommendationImageUploadVO> uploadImage(@RequestParam("file") MultipartFile file) {
         return ApiResponse.success("uploaded", mealRecommendationService.uploadImage(file));
     }
 
+    /**
+     * 更新食谱推荐信息。
+     */
     @PutMapping("/{recipeId:\\d+}")
     public ApiResponse<MealRecommendationVO> updateRecommendation(
             @PathVariable("recipeId")
@@ -72,6 +89,9 @@ public class MealRecommendationController {
         return ApiResponse.success("updated", mealRecommendationService.updateRecommendation(recipeId, request));
     }
 
+    /**
+     * 对指定食谱进行评分。
+     */
     @PostMapping("/{recipeId:\\d+}/ratings")
     public ApiResponse<MealRecommendationRatingVO> rateRecommendation(
             @PathVariable("recipeId")
@@ -81,6 +101,9 @@ public class MealRecommendationController {
         return ApiResponse.success("rated", mealRecommendationService.rateRecommendation(recipeId, request));
     }
 
+    /**
+     * 删除食谱推荐。
+     */
     @DeleteMapping("/{recipeId:\\d+}")
     public ApiResponse<Void> deleteRecommendation(
             @PathVariable("recipeId")

@@ -5,6 +5,9 @@ import org.hylee.phms.server.persistence.HealthGoalDO;
 
 import java.util.List;
 
+/**
+ * 健康目标模板数据访问（管理端维护与用户端可选列表）。
+ */
 public interface HealthGoalMapper {
 
     List<HealthGoalDO> selectAdminGoals(@Param("keyword") String keyword, @Param("goalStatus") Integer goalStatus);

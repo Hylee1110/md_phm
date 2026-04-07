@@ -1,3 +1,6 @@
+<!--
+  食谱：浏览、搜索、评分；管理员或本人可维护食谱与上传图片。
+-->
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import { healthApi } from "../services/healthApi";
@@ -59,6 +62,7 @@ const adminRecipeCount = computed(() => recipes.value.filter((item) => item.admi
 const ownRecipeCount = computed(() => recipes.value.filter((item) => item.createdByCurrentUser).length);
 
 const displayRecipes = computed(() => {
+  // 前端排序：不改变后端默认排序；只有用户显式选择字段与方向时才进行排序
   const list = [...recipes.value];
   const key = sortField.value;
   const dir = sortDir.value;
@@ -141,6 +145,7 @@ function toNumber(value) {
 }
 
 function normalizePositiveDecimal(value) {
+  // 表单中输入的“份量/克数”等转换为正小数；不合法时返回 null 触发表单校验提示
   const num = toNumber(value);
   if (num == null || num <= 0) {
     return null;
@@ -238,6 +243,7 @@ function ratingSummary(recipe) {
 }
 
 function parseServerTimeMs(raw) {
+  // 后端时间字段可能是 ISO 字符串，也可能是数组（如 [yyyy,MM,dd,HH,mm,ss,nanos]），统一转成毫秒时间戳用于排序
   if (raw == null) {
     return 0;
   }

@@ -2,6 +2,9 @@ package org.hylee.phms.server.persistence;
 
 import java.time.LocalDateTime;
 
+/**
+ * 数据导入/同步任务持久化对象（进度计数、状态与摘要信息）。
+ */
 public class SyncTaskDO {
 
     private Long taskId;

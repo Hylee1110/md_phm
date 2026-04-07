@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * 用户已选健康目标持久化对象（含目标区间、进度与状态）。
+ */
 public class UserHealthGoalDO {
 
     private Long userGoalId;

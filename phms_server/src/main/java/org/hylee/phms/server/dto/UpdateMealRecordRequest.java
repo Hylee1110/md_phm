@@ -11,6 +11,9 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 更新饮食记录请求体。
+ */
 public record UpdateMealRecordRequest(
         @NotNull(message = "recipeId is required")
         @Positive(message = "recipeId must be positive")

@@ -2,6 +2,9 @@ package org.hylee.phms.server.vo;
 
 import java.time.LocalDateTime;
 
+/**
+ * 单条用户数据源配置展示对象。
+ */
 public record UserDataSourceVO(
         Long sourceId,
         String sourceName,

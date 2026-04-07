@@ -3,11 +3,23 @@ package org.hylee.phms.server.util;
 import java.time.LocalDate;
 import java.time.Period;
 
+/**
+ * 中国大陆居民身份证号解析工具（15/18 位）。
+ * <p>
+ * 用于从身份证号提取出生日期、性别与年龄；18 位会校验末位校验码。
+ */
 public final class IdCardUtil {
 
     private IdCardUtil() {
     }
 
+    /**
+     * 身份证解析结果。
+     *
+     * @param birthDate 出生日期
+     * @param gender    性别编码（与业务库约定一致，如 1/2）
+     * @param age       按参考日期计算的年龄
+     */
     public record ParseResult(LocalDate birthDate, Integer gender, Integer age) {
     }
 

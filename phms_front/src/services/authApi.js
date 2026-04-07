@@ -1,3 +1,6 @@
+/**
+ * 认证相关 API：注册、登录、登出、当前用户。
+ */
 import { requestJson } from "./http";
 
 export const authApi = {

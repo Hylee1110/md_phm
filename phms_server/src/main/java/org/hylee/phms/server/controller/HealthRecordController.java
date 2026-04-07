@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 健康打卡/记录接口。
+ * <p>
+ * 记录与“用户目标（userGoalId）”关联，用于某个目标下的持续打卡与趋势追踪。
+ */
 @Validated
 @RestController
 @RequestMapping("/api/health/user-goals/{userGoalId}/records")
@@ -30,6 +35,13 @@ public class HealthRecordController {
         this.healthRecordService = healthRecordService;
     }
 
+    /**
+     * 查询指定用户目标下的打卡记录列表。
+     *
+     * @param userGoalId 用户目标 ID
+     * @param rangeDays  取最近 N 天范围（可为空表示默认范围）
+     * @param limit      最大返回条数
+     */
     @GetMapping
     public ApiResponse<List<HealthRecordVO>> listRecords(
             @PathVariable("userGoalId")
@@ -46,6 +58,9 @@ public class HealthRecordController {
         return ApiResponse.success(healthRecordService.listRecords(userGoalId, rangeDays, limit));
     }
 
+    /**
+     * 在指定用户目标下新增一条打卡记录。
+     */
     @PostMapping
     public ApiResponse<HealthRecordVO> createRecord(
             @PathVariable("userGoalId")
