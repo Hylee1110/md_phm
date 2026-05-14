@@ -51,41 +51,41 @@ WHERE @recipe_creator_id IS NOT NULL
   AND NOT EXISTS (SELECT 1 FROM t_recipe r WHERE r.food_name = '演示酸奶水果杯' LIMIT 1);
 
 -- 若无演示课程则补齐（运动记录需要 sport_id）
-INSERT INTO sport_course (
+INSERT INTO t_sport_course (
   name, cover_url, summary, description,
   recommend_duration_min, calories_per_hour, recommend_frequency_per_week,
   level, status, is_deleted, sort_weight
 )
 SELECT '演示快走训练', 'https://example.com/demo-walk.jpg', '适合日常激活身体的低冲击有氧训练。', '面向初学者的快走课程，帮助提升耐力并逐步进入稳定燃脂节奏。', 45, 320, 5, 'beginner', 'published', 0, 100
 FROM DUAL
-WHERE NOT EXISTS (SELECT 1 FROM sport_course c WHERE c.name = '演示快走训练' AND c.is_deleted = 0 LIMIT 1);
+WHERE NOT EXISTS (SELECT 1 FROM t_sport_course c WHERE c.name = '演示快走训练' AND c.is_deleted = 0 LIMIT 1);
 
-INSERT INTO sport_course (
+INSERT INTO t_sport_course (
   name, cover_url, summary, description,
   recommend_duration_min, calories_per_hour, recommend_frequency_per_week,
   level, status, is_deleted, sort_weight
 )
 SELECT '演示舒缓瑜伽', 'https://example.com/demo-yoga.jpg', '用于拉伸放松和舒缓压力的瑜伽练习。', '通过呼吸、拉伸和轻度核心动作，帮助改善柔韧性和恢复状态。', 35, 220, 4, 'all', 'published', 0, 90
 FROM DUAL
-WHERE NOT EXISTS (SELECT 1 FROM sport_course c WHERE c.name = '演示舒缓瑜伽' AND c.is_deleted = 0 LIMIT 1);
+WHERE NOT EXISTS (SELECT 1 FROM t_sport_course c WHERE c.name = '演示舒缓瑜伽' AND c.is_deleted = 0 LIMIT 1);
 
-INSERT INTO sport_course (
+INSERT INTO t_sport_course (
   name, cover_url, summary, description,
   recommend_duration_min, calories_per_hour, recommend_frequency_per_week,
   level, status, is_deleted, sort_weight
 )
 SELECT '演示 HIIT 入门', 'https://example.com/demo-hiit.jpg', '适合忙碌人群的短时高效训练。', '通过简单的间歇组合提升心肺能力，适合已有基础的用户。', 20, 520, 3, 'intermediate', 'published', 0, 80
 FROM DUAL
-WHERE NOT EXISTS (SELECT 1 FROM sport_course c WHERE c.name = '演示 HIIT 入门' AND c.is_deleted = 0 LIMIT 1);
+WHERE NOT EXISTS (SELECT 1 FROM t_sport_course c WHERE c.name = '演示 HIIT 入门' AND c.is_deleted = 0 LIMIT 1);
 
 SET @recipe_oatmeal_id := (SELECT recipe_id FROM t_recipe WHERE food_name = '演示燕麦能量碗' LIMIT 1);
 SET @recipe_salad_id := (SELECT recipe_id FROM t_recipe WHERE food_name = '演示鸡胸肉沙拉' LIMIT 1);
 SET @recipe_salmon_id := (SELECT recipe_id FROM t_recipe WHERE food_name = '演示三文鱼套餐' LIMIT 1);
 SET @recipe_yogurt_id := (SELECT recipe_id FROM t_recipe WHERE food_name = '演示酸奶水果杯' LIMIT 1);
 
-SET @course_walk_id := (SELECT id FROM sport_course WHERE name = '演示快走训练' AND is_deleted = 0 ORDER BY id DESC LIMIT 1);
-SET @course_yoga_id := (SELECT id FROM sport_course WHERE name = '演示舒缓瑜伽' AND is_deleted = 0 ORDER BY id DESC LIMIT 1);
-SET @course_hiit_id := (SELECT id FROM sport_course WHERE name = '演示 HIIT 入门' AND is_deleted = 0 ORDER BY id DESC LIMIT 1);
+SET @course_walk_id := (SELECT id FROM t_sport_course WHERE name = '演示快走训练' AND is_deleted = 0 ORDER BY id DESC LIMIT 1);
+SET @course_yoga_id := (SELECT id FROM t_sport_course WHERE name = '演示舒缓瑜伽' AND is_deleted = 0 ORDER BY id DESC LIMIT 1);
+SET @course_hiit_id := (SELECT id FROM t_sport_course WHERE name = '演示 HIIT 入门' AND is_deleted = 0 ORDER BY id DESC LIMIT 1);
 
 SET @source_manual_id := (
   SELECT source_id FROM t_data_source
@@ -109,7 +109,7 @@ WHERE user_id = @seed_user_id
   AND external_id LIKE CONCAT('TREND_DEMO_', @seed_user_id, '_%');
 
 -- 健康指标：步数↑、静息心率↓、睡眠↑、血压略降、压力略降
-INSERT INTO health_metric (
+INSERT INTO t_health_metric (
   user_id,
   measure_date,
   steps,

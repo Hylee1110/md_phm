@@ -37,7 +37,7 @@
 
     <select id="selectLatestMetricByUser" resultMap="healthMetricMap">
         SELECT <include refid="baseColumns"/>
-        FROM health_metric
+        FROM t_health_metric
         WHERE user_id = #{userId}
         ORDER BY measure_date DESC
         LIMIT 1
@@ -45,7 +45,7 @@
 
     <select id="selectRecentMetrics" resultMap="healthMetricMap">
         SELECT <include refid="baseColumns"/>
-        FROM health_metric
+        FROM t_health_metric
         WHERE user_id = #{userId}
           AND measure_date &gt;= #{startDate}
         ORDER BY measure_date DESC
@@ -54,7 +54,7 @@
 
     <select id="selectByUserAndDate" resultMap="healthMetricMap">
         SELECT <include refid="baseColumns"/>
-        FROM health_metric
+        FROM t_health_metric
         WHERE user_id = #{userId}
           AND measure_date = #{measureDate}
         LIMIT 1
@@ -62,7 +62,7 @@
 
     <insert id="insert" parameterType="org.hylee.phms.server.persistence.HealthMetricDO"
             useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO health_metric (
+        INSERT INTO t_health_metric (
             user_id,
             measure_date,
             steps,
@@ -93,7 +93,7 @@
     </insert>
 
     <update id="updateByUserAndDate" parameterType="org.hylee.phms.server.persistence.HealthMetricDO">
-        UPDATE health_metric
+        UPDATE t_health_metric
         SET steps = #{steps},
             resting_heart_rate = #{restingHeartRate},
             sleep_hours = #{sleepHours},
@@ -109,7 +109,7 @@
     </update>
 
     <update id="clearSourceReferenceByUserAndSource">
-        UPDATE health_metric
+        UPDATE t_health_metric
         SET source_id = NULL
         WHERE user_id = #{userId}
           AND source_id = #{sourceId}
@@ -117,7 +117,7 @@
 
     <select id="countImportedMetricDays" resultType="long">
         SELECT COUNT(*)
-        FROM health_metric
+        FROM t_health_metric
         WHERE user_id = #{userId}
           AND source_id IS NOT NULL
     </select>

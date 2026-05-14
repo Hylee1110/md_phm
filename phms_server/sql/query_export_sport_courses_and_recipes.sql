@@ -7,7 +7,7 @@ USE md_phms;
 
 -- 一、运动课程（未软删）
 SELECT sc.name AS 课程名称
-FROM sport_course sc
+FROM t_sport_course sc
 WHERE sc.is_deleted = 0
 ORDER BY sc.sort_weight DESC, sc.updated_at DESC, sc.id DESC;
 

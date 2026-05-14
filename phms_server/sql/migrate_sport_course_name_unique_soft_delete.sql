@@ -4,12 +4,12 @@
 --
 -- Run once against existing databases that still have UNIQUE KEY uk_course_name (name).
 
-ALTER TABLE sport_course
+ALTER TABLE t_sport_course
   ADD COLUMN name_unique_active VARCHAR(64)
     GENERATED ALWAYS AS (CASE WHEN is_deleted = 0 THEN name ELSE NULL END) STORED
   AFTER sort_weight;
 
-ALTER TABLE sport_course DROP INDEX uk_course_name;
+ALTER TABLE t_sport_course DROP INDEX uk_course_name;
 
-ALTER TABLE sport_course
+ALTER TABLE t_sport_course
   ADD UNIQUE KEY uk_course_name_active (name_unique_active);

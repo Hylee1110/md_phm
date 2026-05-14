@@ -11,7 +11,7 @@
     </resultMap>
 
     <insert id="upsertRatingLog">
-        INSERT INTO sport_course_rating_log (
+        INSERT INTO t_sport_course_rating_log (
             course_id,
             user_id,
             score,
@@ -29,7 +29,7 @@
     </insert>
 
     <insert id="refreshCourseRating">
-        INSERT INTO sport_course_rating (
+        INSERT INTO t_sport_course_rating (
             course_id,
             rating_avg,
             rating_count
@@ -38,7 +38,7 @@
             #{courseId},
             ROUND(IFNULL(AVG(score), 0), 2),
             COUNT(1)
-        FROM sport_course_rating_log
+        FROM t_sport_course_rating_log
         WHERE course_id = #{courseId}
         ON DUPLICATE KEY UPDATE
             rating_avg = VALUES(rating_avg),
@@ -51,9 +51,9 @@
             IFNULL(scr.rating_avg, 0.00) AS rating_avg,
             IFNULL(scr.rating_count, 0) AS rating_count,
             rl.score AS user_score
-        FROM sport_course sc
-        LEFT JOIN sport_course_rating scr ON scr.course_id = sc.id
-        LEFT JOIN sport_course_rating_log rl
+        FROM t_sport_course sc
+        LEFT JOIN t_sport_course_rating scr ON scr.course_id = sc.id
+        LEFT JOIN t_sport_course_rating_log rl
                ON rl.course_id = sc.id
               AND rl.user_id = #{userId}
         WHERE sc.id = #{courseId}

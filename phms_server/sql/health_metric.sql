@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS health_metric (
+CREATE TABLE IF NOT EXISTS t_health_metric (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   user_id BIGINT NOT NULL,
   measure_date DATE NOT NULL,

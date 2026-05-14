@@ -50,7 +50,7 @@
         FROM t_data_source ds
         LEFT JOIN (
             SELECT source_id, COUNT(*) AS metric_count
-            FROM health_metric
+            FROM t_health_metric
             WHERE source_id IS NOT NULL
             GROUP BY source_id
         ) metric_stats ON metric_stats.source_id = ds.source_id
@@ -79,7 +79,7 @@
         FROM t_data_source ds
         LEFT JOIN (
             SELECT source_id, COUNT(*) AS metric_count
-            FROM health_metric
+            FROM t_health_metric
             WHERE source_id IS NOT NULL
             GROUP BY source_id
         ) metric_stats ON metric_stats.source_id = ds.source_id

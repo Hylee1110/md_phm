@@ -10,55 +10,55 @@
 
     <select id="selectAudiences" resultMap="optionMap">
         SELECT id, name
-        FROM sport_audience
+        FROM t_sport_audience
         ORDER BY id ASC
     </select>
 
     <select id="selectAudienceByName" resultMap="optionMap">
         SELECT id, name
-        FROM sport_audience
+        FROM t_sport_audience
         WHERE name = #{name}
         LIMIT 1
     </select>
 
     <select id="selectEquipments" resultMap="optionMap">
         SELECT id, name
-        FROM sport_equipment
+        FROM t_sport_equipment
         ORDER BY id ASC
     </select>
 
     <select id="selectEquipmentByName" resultMap="optionMap">
         SELECT id, name
-        FROM sport_equipment
+        FROM t_sport_equipment
         WHERE name = #{name}
         LIMIT 1
     </select>
 
     <select id="selectBenefits" resultMap="optionMap">
         SELECT id, name
-        FROM sport_benefit
+        FROM t_sport_benefit
         ORDER BY id ASC
     </select>
 
     <select id="selectBenefitByName" resultMap="optionMap">
         SELECT id, name
-        FROM sport_benefit
+        FROM t_sport_benefit
         WHERE name = #{name}
         LIMIT 1
     </select>
 
     <insert id="insertAudience">
-        INSERT IGNORE INTO sport_audience(name)
+        INSERT IGNORE INTO t_sport_audience(name)
         VALUES (#{name})
     </insert>
 
     <insert id="insertEquipment">
-        INSERT IGNORE INTO sport_equipment(name)
+        INSERT IGNORE INTO t_sport_equipment(name)
         VALUES (#{name})
     </insert>
 
     <insert id="insertBenefit">
-        INSERT IGNORE INTO sport_benefit(name)
+        INSERT IGNORE INTO t_sport_benefit(name)
         VALUES (#{name})
     </insert>
 
@@ -66,7 +66,7 @@
         <choose>
             <when test="ids != null and ids.size() > 0">
                 SELECT COUNT(1)
-                FROM sport_audience
+                FROM t_sport_audience
                 WHERE id IN
                 <foreach collection="ids" item="id" open="(" close=")" separator=",">
                     #{id}
@@ -82,7 +82,7 @@
         <choose>
             <when test="ids != null and ids.size() > 0">
                 SELECT COUNT(1)
-                FROM sport_equipment
+                FROM t_sport_equipment
                 WHERE id IN
                 <foreach collection="ids" item="id" open="(" close=")" separator=",">
                     #{id}
@@ -98,7 +98,7 @@
         <choose>
             <when test="ids != null and ids.size() > 0">
                 SELECT COUNT(1)
-                FROM sport_benefit
+                FROM t_sport_benefit
                 WHERE id IN
                 <foreach collection="ids" item="id" open="(" close=")" separator=",">
                     #{id}

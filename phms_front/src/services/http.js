@@ -14,7 +14,7 @@ export class ApiError extends Error {
 
 const API_BASE_URL = String(import.meta.env.VITE_API_BASE_URL ?? "").trim();
 
-function buildApiUrl(path) {
+export function buildApiUrl(path) {
   // 允许传入完整 URL（例如第三方资源），此时不做 base 拼接
   if (/^https?:\/\//i.test(path)) {
     return path;

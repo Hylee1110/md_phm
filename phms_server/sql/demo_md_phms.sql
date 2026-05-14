@@ -54,181 +54,181 @@ ON DUPLICATE KEY UPDATE
 SET @goal_bmi_id := (SELECT goal_id FROM t_health_goal WHERE goal_code = 'BMI' LIMIT 1);
 SET @goal_rhr_id := (SELECT goal_id FROM t_health_goal WHERE goal_code = 'RESTING_HEART_RATE' LIMIT 1);
 
-INSERT IGNORE INTO sport_audience(name) VALUES ('全部人群'), ('青少年'), ('成年人'), ('老年人');
-INSERT IGNORE INTO sport_equipment(name) VALUES ('无需器械'), ('跳绳'), ('哑铃'), ('瑜伽垫');
-INSERT IGNORE INTO sport_benefit(name) VALUES ('燃脂'), ('增肌'), ('缓解压力'), ('提升柔韧性');
+INSERT IGNORE INTO t_sport_audience(name) VALUES ('全部人群'), ('青少年'), ('成年人'), ('老年人');
+INSERT IGNORE INTO t_sport_equipment(name) VALUES ('无需器械'), ('跳绳'), ('哑铃'), ('瑜伽垫');
+INSERT IGNORE INTO t_sport_benefit(name) VALUES ('燃脂'), ('增肌'), ('缓解压力'), ('提升柔韧性');
 
-INSERT IGNORE INTO sport_course_audience (course_id, audience_id)
+INSERT IGNORE INTO t_sport_course_audience (course_id, audience_id)
 SELECT sca.course_id, target.id
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
-JOIN sport_audience target ON target.name = '全部人群'
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
+JOIN t_sport_audience target ON target.name = '全部人群'
 WHERE source.name = 'all';
 DELETE sca
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
 WHERE source.name = 'all';
 
-INSERT IGNORE INTO sport_course_audience (course_id, audience_id)
+INSERT IGNORE INTO t_sport_course_audience (course_id, audience_id)
 SELECT sca.course_id, target.id
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
-JOIN sport_audience target ON target.name = '全部人群'
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
+JOIN t_sport_audience target ON target.name = '全部人群'
 WHERE source.name = '所有人';
 DELETE sca
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
 WHERE source.name = '所有人';
 
-INSERT IGNORE INTO sport_course_audience (course_id, audience_id)
+INSERT IGNORE INTO t_sport_course_audience (course_id, audience_id)
 SELECT sca.course_id, target.id
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
-JOIN sport_audience target ON target.name = '青少年'
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
+JOIN t_sport_audience target ON target.name = '青少年'
 WHERE source.name = 'teenagers';
 DELETE sca
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
 WHERE source.name = 'teenagers';
 
-INSERT IGNORE INTO sport_course_audience (course_id, audience_id)
+INSERT IGNORE INTO t_sport_course_audience (course_id, audience_id)
 SELECT sca.course_id, target.id
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
-JOIN sport_audience target ON target.name = '成年人'
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
+JOIN t_sport_audience target ON target.name = '成年人'
 WHERE source.name = 'adults';
 DELETE sca
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
 WHERE source.name = 'adults';
 
-INSERT IGNORE INTO sport_course_audience (course_id, audience_id)
+INSERT IGNORE INTO t_sport_course_audience (course_id, audience_id)
 SELECT sca.course_id, target.id
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
-JOIN sport_audience target ON target.name = '老年人'
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
+JOIN t_sport_audience target ON target.name = '老年人'
 WHERE source.name = 'seniors';
 DELETE sca
-FROM sport_course_audience sca
-JOIN sport_audience source ON source.id = sca.audience_id
+FROM t_sport_course_audience sca
+JOIN t_sport_audience source ON source.id = sca.audience_id
 WHERE source.name = 'seniors';
 
-INSERT IGNORE INTO sport_course_equipment (course_id, equipment_id)
+INSERT IGNORE INTO t_sport_course_equipment (course_id, equipment_id)
 SELECT sce.course_id, target.id
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
-JOIN sport_equipment target ON target.name = '无需器械'
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
+JOIN t_sport_equipment target ON target.name = '无需器械'
 WHERE source.name = 'none';
 DELETE sce
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
 WHERE source.name = 'none';
 
-INSERT IGNORE INTO sport_course_equipment (course_id, equipment_id)
+INSERT IGNORE INTO t_sport_course_equipment (course_id, equipment_id)
 SELECT sce.course_id, target.id
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
-JOIN sport_equipment target ON target.name = '无需器械'
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
+JOIN t_sport_equipment target ON target.name = '无需器械'
 WHERE source.name = '无';
 DELETE sce
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
 WHERE source.name = '无';
 
-INSERT IGNORE INTO sport_course_equipment (course_id, equipment_id)
+INSERT IGNORE INTO t_sport_course_equipment (course_id, equipment_id)
 SELECT sce.course_id, target.id
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
-JOIN sport_equipment target ON target.name = '跳绳'
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
+JOIN t_sport_equipment target ON target.name = '跳绳'
 WHERE source.name = 'jump rope';
 DELETE sce
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
 WHERE source.name = 'jump rope';
 
-INSERT IGNORE INTO sport_course_equipment (course_id, equipment_id)
+INSERT IGNORE INTO t_sport_course_equipment (course_id, equipment_id)
 SELECT sce.course_id, target.id
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
-JOIN sport_equipment target ON target.name = '哑铃'
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
+JOIN t_sport_equipment target ON target.name = '哑铃'
 WHERE source.name = 'dumbbell';
 DELETE sce
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
 WHERE source.name = 'dumbbell';
 
-INSERT IGNORE INTO sport_course_equipment (course_id, equipment_id)
+INSERT IGNORE INTO t_sport_course_equipment (course_id, equipment_id)
 SELECT sce.course_id, target.id
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
-JOIN sport_equipment target ON target.name = '瑜伽垫'
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
+JOIN t_sport_equipment target ON target.name = '瑜伽垫'
 WHERE source.name = 'yoga mat';
 DELETE sce
-FROM sport_course_equipment sce
-JOIN sport_equipment source ON source.id = sce.equipment_id
+FROM t_sport_course_equipment sce
+JOIN t_sport_equipment source ON source.id = sce.equipment_id
 WHERE source.name = 'yoga mat';
 
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
 SELECT scb.course_id, target.id, scb.sort_order
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
-JOIN sport_benefit target ON target.name = '燃脂'
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
+JOIN t_sport_benefit target ON target.name = '燃脂'
 WHERE source.name = 'fat burn';
 DELETE scb
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
 WHERE source.name = 'fat burn';
 
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
 SELECT scb.course_id, target.id, scb.sort_order
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
-JOIN sport_benefit target ON target.name = '增肌'
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
+JOIN t_sport_benefit target ON target.name = '增肌'
 WHERE source.name = 'muscle gain';
 DELETE scb
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
 WHERE source.name = 'muscle gain';
 
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
 SELECT scb.course_id, target.id, scb.sort_order
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
-JOIN sport_benefit target ON target.name = '缓解压力'
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
+JOIN t_sport_benefit target ON target.name = '缓解压力'
 WHERE source.name = 'stress relief';
 DELETE scb
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
 WHERE source.name = 'stress relief';
 
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
 SELECT scb.course_id, target.id, scb.sort_order
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
-JOIN sport_benefit target ON target.name = '缓解压力'
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
+JOIN t_sport_benefit target ON target.name = '缓解压力'
 WHERE source.name = '减压';
 DELETE scb
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
 WHERE source.name = '减压';
 
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
 SELECT scb.course_id, target.id, scb.sort_order
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
-JOIN sport_benefit target ON target.name = '提升柔韧性'
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
+JOIN t_sport_benefit target ON target.name = '提升柔韧性'
 WHERE source.name = 'flexibility';
 DELETE scb
-FROM sport_course_benefit scb
-JOIN sport_benefit source ON source.id = scb.benefit_id
+FROM t_sport_course_benefit scb
+JOIN t_sport_benefit source ON source.id = scb.benefit_id
 WHERE source.name = 'flexibility';
 
-DELETE FROM sport_audience WHERE name IN ('all', 'teenagers', 'adults', 'seniors', '所有人');
-DELETE FROM sport_equipment WHERE name IN ('none', 'jump rope', 'dumbbell', 'yoga mat', '无');
-DELETE FROM sport_benefit WHERE name IN ('fat burn', 'muscle gain', 'stress relief', 'flexibility', '减压');
+DELETE FROM t_sport_audience WHERE name IN ('all', 'teenagers', 'adults', 'seniors', '所有人');
+DELETE FROM t_sport_equipment WHERE name IN ('none', 'jump rope', 'dumbbell', 'yoga mat', '无');
+DELETE FROM t_sport_benefit WHERE name IN ('fat burn', 'muscle gain', 'stress relief', 'flexibility', '减压');
 
 -- 清理旧演示数据，支持重复导入
-DELETE FROM health_metric
+DELETE FROM t_health_metric
 WHERE user_id = @demo_user_id
   AND measure_date >= DATE_SUB(CURDATE(), INTERVAL 20 DAY);
 
@@ -308,7 +308,7 @@ WHERE food_name IN (
   '演示酸奶水果杯'
 );
 
-DELETE FROM sport_course
+DELETE FROM t_sport_course
 WHERE name IN (
   'Demo Brisk Walking',
   'Demo Yoga Flow',
@@ -377,7 +377,7 @@ ON DUPLICATE KEY UPDATE
   last_change_time = VALUES(last_change_time);
 
 -- 演示运动课程
-INSERT INTO sport_course (
+INSERT INTO t_sport_course (
   name,
   cover_url,
   summary,
@@ -395,38 +395,38 @@ VALUES
   ('演示舒缓瑜伽', 'https://example.com/demo-yoga.jpg', '用于拉伸放松和舒缓压力的瑜伽练习。', '通过呼吸、拉伸和轻度核心动作，帮助改善柔韧性和恢复状态。', 35, 220, 4, 'all', 'published', 0, 90),
   ('演示 HIIT 入门', 'https://example.com/demo-hiit.jpg', '适合忙碌人群的短时高效训练。', '通过简单的间歇组合提升心肺能力，适合已有基础的用户。', 20, 520, 3, 'intermediate', 'published', 0, 80);
 
-SET @course_walk_id := (SELECT id FROM sport_course WHERE name = '演示快走训练' LIMIT 1);
-SET @course_yoga_id := (SELECT id FROM sport_course WHERE name = '演示舒缓瑜伽' LIMIT 1);
-SET @course_hiit_id := (SELECT id FROM sport_course WHERE name = '演示 HIIT 入门' LIMIT 1);
+SET @course_walk_id := (SELECT id FROM t_sport_course WHERE name = '演示快走训练' LIMIT 1);
+SET @course_yoga_id := (SELECT id FROM t_sport_course WHERE name = '演示舒缓瑜伽' LIMIT 1);
+SET @course_hiit_id := (SELECT id FROM t_sport_course WHERE name = '演示 HIIT 入门' LIMIT 1);
 
-INSERT IGNORE INTO sport_course_audience (course_id, audience_id)
-SELECT @course_walk_id, id FROM sport_audience WHERE name IN ('全部人群', '成年人');
-INSERT IGNORE INTO sport_course_audience (course_id, audience_id)
-SELECT @course_yoga_id, id FROM sport_audience WHERE name IN ('全部人群', '成年人', '老年人');
-INSERT IGNORE INTO sport_course_audience (course_id, audience_id)
-SELECT @course_hiit_id, id FROM sport_audience WHERE name IN ('成年人');
+INSERT IGNORE INTO t_sport_course_audience (course_id, audience_id)
+SELECT @course_walk_id, id FROM t_sport_audience WHERE name IN ('全部人群', '成年人');
+INSERT IGNORE INTO t_sport_course_audience (course_id, audience_id)
+SELECT @course_yoga_id, id FROM t_sport_audience WHERE name IN ('全部人群', '成年人', '老年人');
+INSERT IGNORE INTO t_sport_course_audience (course_id, audience_id)
+SELECT @course_hiit_id, id FROM t_sport_audience WHERE name IN ('成年人');
 
-INSERT IGNORE INTO sport_course_equipment (course_id, equipment_id)
-SELECT @course_walk_id, id FROM sport_equipment WHERE name IN ('无需器械');
-INSERT IGNORE INTO sport_course_equipment (course_id, equipment_id)
-SELECT @course_yoga_id, id FROM sport_equipment WHERE name IN ('瑜伽垫');
-INSERT IGNORE INTO sport_course_equipment (course_id, equipment_id)
-SELECT @course_hiit_id, id FROM sport_equipment WHERE name IN ('无需器械', '哑铃');
+INSERT IGNORE INTO t_sport_course_equipment (course_id, equipment_id)
+SELECT @course_walk_id, id FROM t_sport_equipment WHERE name IN ('无需器械');
+INSERT IGNORE INTO t_sport_course_equipment (course_id, equipment_id)
+SELECT @course_yoga_id, id FROM t_sport_equipment WHERE name IN ('瑜伽垫');
+INSERT IGNORE INTO t_sport_course_equipment (course_id, equipment_id)
+SELECT @course_hiit_id, id FROM t_sport_equipment WHERE name IN ('无需器械', '哑铃');
 
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
-SELECT @course_walk_id, id, 1 FROM sport_benefit WHERE name = '燃脂';
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
-SELECT @course_walk_id, id, 2 FROM sport_benefit WHERE name = '缓解压力';
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
-SELECT @course_yoga_id, id, 1 FROM sport_benefit WHERE name = '提升柔韧性';
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
-SELECT @course_yoga_id, id, 2 FROM sport_benefit WHERE name = '缓解压力';
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
-SELECT @course_hiit_id, id, 1 FROM sport_benefit WHERE name = '燃脂';
-INSERT IGNORE INTO sport_course_benefit (course_id, benefit_id, sort_order)
-SELECT @course_hiit_id, id, 2 FROM sport_benefit WHERE name = '增肌';
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
+SELECT @course_walk_id, id, 1 FROM t_sport_benefit WHERE name = '燃脂';
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
+SELECT @course_walk_id, id, 2 FROM t_sport_benefit WHERE name = '缓解压力';
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
+SELECT @course_yoga_id, id, 1 FROM t_sport_benefit WHERE name = '提升柔韧性';
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
+SELECT @course_yoga_id, id, 2 FROM t_sport_benefit WHERE name = '缓解压力';
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
+SELECT @course_hiit_id, id, 1 FROM t_sport_benefit WHERE name = '燃脂';
+INSERT IGNORE INTO t_sport_course_benefit (course_id, benefit_id, sort_order)
+SELECT @course_hiit_id, id, 2 FROM t_sport_benefit WHERE name = '增肌';
 
-INSERT INTO sport_course_rating_log (
+INSERT INTO t_sport_course_rating_log (
   course_id,
   user_id,
   score,
@@ -443,7 +443,7 @@ ON DUPLICATE KEY UPDATE
   comment = VALUES(comment),
   created_at = VALUES(created_at);
 
-INSERT INTO sport_course_rating (
+INSERT INTO t_sport_course_rating (
   course_id,
   rating_avg,
   rating_count,
@@ -454,7 +454,7 @@ SELECT
   ROUND(AVG(score), 2) AS rating_avg,
   COUNT(*) AS rating_count,
   NOW()
-FROM sport_course_rating_log
+FROM t_sport_course_rating_log
 WHERE course_id IN (@course_walk_id, @course_yoga_id, @course_hiit_id)
 GROUP BY course_id
 ON DUPLICATE KEY UPDATE
@@ -583,7 +583,7 @@ SET @task_file_id := (
 );
 
 -- 演示趋势数据
-INSERT INTO health_metric (
+INSERT INTO t_health_metric (
   user_id,
   measure_date,
   steps,
